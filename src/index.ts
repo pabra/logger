@@ -7,12 +7,14 @@ import {
   Handler,
   Handlers,
   Logger,
+  logLevels,
   Message,
   MessageRaw,
   Transporter,
 } from './types';
 
-const maxLevelFilter: Filter = (logger, msg) => msg.level <= logger.level;
+const maxLevelFilter: Filter = (logger, msg) =>
+  logLevels[msg.level] <= logLevels[logger.level];
 
 const textFormatter: Formatter = (logger, msg) => ({
   ...msg,

@@ -61,6 +61,7 @@ type GetLoggerWrapper = (
   handlers?: Handlers,
 ) => GetLoggerReturn;
 
+export { logLevels };
 export type {
   Filter,
   Formatter,
