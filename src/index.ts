@@ -43,34 +43,35 @@ const logHandlers = (logger: Logger, msg: Message, handlers: Handlers) => {
   }
 };
 
-const getLoggerWrapper: GetLoggerWrapper = ({
+const getLoggerWrapper: GetLoggerWrapper = (
   name = 'root',
   level = 'info',
   handlers = [defaultHandler],
-}): GetLoggerReturn => getLogger({ name, level, handlers, nameChain: [] });
+): GetLoggerReturn => getLogger(name, level, handlers, []);
 
-const getLogger: GetLogger = ({
+const getLogger: GetLogger = (
   name,
   level,
   handlers,
   nameChain,
-}): GetLoggerReturn => {
+): GetLoggerReturn => {
   const logger: Logger = {
     name,
     level,
     nameChain: [...nameChain, name] as const,
   } as const;
-  const getChildLogger: GetLoggerWrapper = ({
-    name: newName,
-    level: newLevel,
-    handlers: newHandlers,
-  }) =>
-    getLogger({
-      name: newName,
-      level: newLevel ?? level,
-      handlers: newHandlers ?? handlers,
-      nameChain: logger.nameChain,
-    });
+
+  const getChildLogger: GetLoggerWrapper = (
+    newName = `sub${logger.nameChain.length}`,
+    newLevel,
+    newHandlers,
+  ) =>
+    getLogger(
+      newName,
+      newLevel ?? level,
+      newHandlers ?? handlers,
+      logger.nameChain,
+    );
 
   return {
     getLogger: getChildLogger,

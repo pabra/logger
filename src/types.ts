@@ -44,22 +44,22 @@ type Handler = {
 };
 type Handlers = Readonly<Handler[]>;
 
-type GetLoggerArgs = {
-  readonly name: string;
-  readonly level: keyof LogLevels;
-  readonly handlers: Handlers;
-  readonly nameChain: NameChain;
-};
 type GetLoggerReturn = { [K in keyof LogLevels]: (msg: MessageRaw) => void } & {
   getLogger: GetLoggerWrapper;
 };
-type GetLogger = (args: GetLoggerArgs) => GetLoggerReturn;
-type GetLoggerWrapperArgs = {
-  readonly name: string;
-  readonly level?: keyof LogLevels;
-  readonly handlers?: Handlers;
-};
-type GetLoggerWrapper = (args: GetLoggerWrapperArgs) => GetLoggerReturn;
+
+type GetLogger = (
+  name: string,
+  level: keyof LogLevels,
+  handlers: Handlers,
+  nameChain: NameChain,
+) => GetLoggerReturn;
+
+type GetLoggerWrapper = (
+  name?: string,
+  level?: keyof LogLevels,
+  handlers?: Handlers,
+) => GetLoggerReturn;
 
 export type {
   Filter,
