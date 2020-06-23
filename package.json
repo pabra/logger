@@ -18,6 +18,7 @@
     "format:check": "prettier --check \"src/**/*.{js,ts,jsx,tsx,json,html,css,scss,yml,yaml}\"",
     "lint": "eslint \"src/**/*.{js,ts,jsx,tsx}\"",
     "test": "jest",
+    "test:debug": "node --inspect node_modules/.bin/jest --runInBand",
     "pretest:coverage": "npm run clean:coverage",
     "test:coverage": "jest --coverage",
     "test:after-commit": "run-p format:check lint test:coverage build:check",
