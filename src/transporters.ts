@@ -1,8 +1,7 @@
 import { Transporter } from './types';
 
-const consoleTransporter: Transporter = (_logger, msg) => {
-  console.log(msg.formatted);
-  return true;
+const consoleTransporter: Transporter = (_logger, { formatted }) => {
+  console.log(formatted);
 };
 
 export { consoleTransporter };

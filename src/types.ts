@@ -1,14 +1,4 @@
-// https://en.wikipedia.org/wiki/Syslog#Severity_level
-const logLevels = {
-  emerg: 0,
-  alert: 1,
-  crit: 2,
-  err: 3,
-  warning: 4,
-  notice: 5,
-  info: 6,
-  debug: 7,
-} as const;
+import { logLevels } from './levels';
 
 type LogLevels = typeof logLevels;
 type LoggerNameChain = Readonly<string[]>;
@@ -62,7 +52,6 @@ type GetChildLogger = (args?: {
   handlers?: Handlers;
 }) => GetLoggerReturn;
 
-export { logLevels };
 export type {
   Filter,
   Formatter,
