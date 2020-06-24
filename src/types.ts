@@ -12,15 +12,17 @@ const logLevels = {
 
 type LogLevels = typeof logLevels;
 type LoggerName = string;
-type NameChain = Readonly<LoggerName[]>;
+type ChainedLoggerName = string;
+type LoggerNameChain = Readonly<LoggerName[]>;
+type Log = (message: string) => void;
 type Logger = {
   readonly level: keyof LogLevels;
   readonly name: LoggerName;
-  readonly nameChain: NameChain;
+  readonly nameChain: LoggerNameChain;
+  readonly chainedName: ChainedLoggerName;
 };
-type MessageRaw = string;
 interface Message {
-  readonly raw: MessageRaw;
+  readonly raw: string;
   readonly level: keyof LogLevels;
 }
 interface MessageFormatted extends Message {
@@ -44,34 +46,42 @@ type Handler = {
 };
 type Handlers = Readonly<Handler[]>;
 
-type GetLoggerReturn = { [K in keyof LogLevels]: (msg: MessageRaw) => void } & {
-  getLogger: GetLoggerWrapper;
+type GetLoggerReturn = { [K in keyof LogLevels]: Log } & {
+  getLogger: GetChildLogger;
 };
 
-type GetLogger = (
+type GetLoggerWithChain = (
   name: string,
   level: keyof LogLevels,
   handlers: Handlers,
-  nameChain: NameChain,
+  nameChain: LoggerNameChain,
 ) => GetLoggerReturn;
 
-type GetLoggerWrapper = (
-  name?: string,
-  level?: keyof LogLevels,
-  handlers?: Handlers,
-) => GetLoggerReturn;
+type GetLogger = (args: {
+  name?: string;
+  level?: keyof LogLevels;
+  handlers: Handlers;
+}) => GetLoggerReturn;
+
+type GetChildLogger = (args?: {
+  name?: string;
+  level?: keyof LogLevels;
+  handlers?: Handlers;
+}) => GetLoggerReturn;
 
 export { logLevels };
 export type {
   Filter,
   Formatter,
+  GetChildLogger,
   GetLogger,
   GetLoggerReturn,
-  GetLoggerWrapper,
+  GetLoggerWithChain,
   Handler,
   Handlers,
   Logger,
+  LoggerName,
+  LoggerNameChain,
   Message,
-  MessageRaw,
   Transporter,
 };
