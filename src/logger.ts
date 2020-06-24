@@ -29,7 +29,6 @@ const logHandlers = (logger: Logger, msg: Message, handlers: Handlers) => {
 
 const getLoggerWithChain: GetLoggerWithChain = (
   name,
-  level,
   handlers,
   nameChain,
 ): GetLoggerReturn => {
@@ -40,17 +39,14 @@ const getLoggerWithChain: GetLoggerWithChain = (
   const newNameChain: LoggerNameChain = [...nameChain, name] as const;
   const logger: Logger = {
     name,
-    level,
     nameChain: newNameChain,
     chainedName: newNameChain.join(':'),
   } as const;
 
   const getChildLogger: GetChildLogger = ({
     name: childName = `sub${logger.nameChain.length}`,
-    level: childLevel = level,
     handlers: childHandlers = handlers,
-  } = {}) =>
-    getLoggerWithChain(childName, childLevel, childHandlers, logger.nameChain);
+  } = {}) => getLoggerWithChain(childName, childHandlers, logger.nameChain);
 
   return {
     getLogger: getChildLogger,
@@ -66,10 +62,7 @@ const getLoggerWithChain: GetLoggerWithChain = (
   };
 };
 
-const getLogger: GetLogger = ({
-  name = 'root',
-  level = 'warning',
-  handlers,
-}): GetLoggerReturn => getLoggerWithChain(name, level, handlers, []);
+const getLogger: GetLogger = ({ name = 'root', handlers }): GetLoggerReturn =>
+  getLoggerWithChain(name, handlers, []);
 
 export { getLogger };

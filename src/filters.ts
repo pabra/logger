@@ -1,6 +1,6 @@
-import { Filter, logLevels } from './types';
+import { Filter, logLevels, LogLevels } from './types';
 
-const maxLevelFilter: Filter = (logger, msg) =>
-  logLevels[msg.level] <= logLevels[logger.level];
+const getMaxLevelFilter = (level: keyof LogLevels): Filter => (_logger, msg) =>
+  logLevels[msg.level] <= logLevels[level];
 
-export { maxLevelFilter };
+export { getMaxLevelFilter };

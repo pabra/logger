@@ -16,7 +16,6 @@ type ChainedLoggerName = string;
 type LoggerNameChain = Readonly<LoggerName[]>;
 type Log = (message: string) => void;
 type Logger = {
-  readonly level: keyof LogLevels;
   readonly name: LoggerName;
   readonly nameChain: LoggerNameChain;
   readonly chainedName: ChainedLoggerName;
@@ -52,20 +51,17 @@ type GetLoggerReturn = { [K in keyof LogLevels]: Log } & {
 
 type GetLoggerWithChain = (
   name: string,
-  level: keyof LogLevels,
   handlers: Handlers,
   nameChain: LoggerNameChain,
 ) => GetLoggerReturn;
 
 type GetLogger = (args: {
   name?: string;
-  level?: keyof LogLevels;
   handlers: Handlers;
 }) => GetLoggerReturn;
 
 type GetChildLogger = (args?: {
   name?: string;
-  level?: keyof LogLevels;
   handlers?: Handlers;
 }) => GetLoggerReturn;
 
@@ -79,6 +75,7 @@ export type {
   GetLoggerWithChain,
   Handler,
   Handlers,
+  LogLevels,
   Logger,
   LoggerName,
   LoggerNameChain,
