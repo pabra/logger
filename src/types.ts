@@ -11,14 +11,12 @@ const logLevels = {
 } as const;
 
 type LogLevels = typeof logLevels;
-type LoggerName = string;
-type ChainedLoggerName = string;
-type LoggerNameChain = Readonly<LoggerName[]>;
+type LoggerNameChain = Readonly<string[]>;
 type Log = (message: string) => void;
 type Logger = {
-  readonly name: LoggerName;
+  readonly name: string;
   readonly nameChain: LoggerNameChain;
-  readonly chainedName: ChainedLoggerName;
+  readonly chainedName: string;
 };
 interface Message {
   readonly raw: string;
@@ -77,7 +75,6 @@ export type {
   Handlers,
   LogLevels,
   Logger,
-  LoggerName,
   LoggerNameChain,
   Message,
   Transporter,

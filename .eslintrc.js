@@ -1,11 +1,12 @@
 module.exports = {
   root: true,
   parser: '@typescript-eslint/parser',
-  plugins: ['@typescript-eslint', 'jest', 'prettier'],
+  plugins: ['@typescript-eslint', 'jest', 'prettier', 'import'],
   extends: [
     'eslint:recommended',
     'plugin:node/recommended',
     'plugin:jest/recommended',
+    'plugin:import/typescript',
     'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
     'prettier/@typescript-eslint',
@@ -30,6 +31,7 @@ module.exports = {
 
     // js
     'no-shadow': 2,
+    'import/no-unused-modules': [2, { unusedExports: true }],
     eqeqeq: 2,
     'node/no-missing-import': [
       2,
