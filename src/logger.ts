@@ -10,7 +10,7 @@ import {
   Message,
 } from './types';
 
-const validLoggerNameExp = /[a-zA-Z][a-zA-Z0-9_]*/;
+const validLoggerNameExp = /^[a-zA-Z][a-zA-Z0-9_]*$/;
 const isValidLoggerName = (name: string) => validLoggerNameExp.test(name);
 
 const log = (logger: Logger, msg: Message, handler: Handler) => {
@@ -44,7 +44,7 @@ const getLoggerWithChain: GetLoggerWithChain = (
   } as const;
 
   const getChildLogger: GetChildLogger = ({
-    name: childName = `sub${logger.nameChain.length}`,
+    name: childName = `child${logger.nameChain.length}`,
     handlers: childHandlers = handlers,
   } = {}) => getLoggerWithChain(childName, childHandlers, logger.nameChain);
 

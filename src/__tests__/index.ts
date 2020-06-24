@@ -62,31 +62,31 @@ describe('tests involving console.log', () => {
   test('child emerg', () => {
     const message = 'this is emergency';
     childLogger.emerg(message);
-    expect(mockLog).toHaveBeenCalledWith('root:sub1 - emerg: ' + message);
+    expect(mockLog).toHaveBeenCalledWith('root:child1 - emerg: ' + message);
   });
 
   test('child alert', () => {
     const message = 'this is alert';
     childLogger.alert(message);
-    expect(mockLog).toHaveBeenCalledWith('root:sub1 - alert: ' + message);
+    expect(mockLog).toHaveBeenCalledWith('root:child1 - alert: ' + message);
   });
 
   test('child crit', () => {
     const message = 'this is crit';
     childLogger.crit(message);
-    expect(mockLog).toHaveBeenCalledWith('root:sub1 - crit: ' + message);
+    expect(mockLog).toHaveBeenCalledWith('root:child1 - crit: ' + message);
   });
 
   test('child err', () => {
     const message = 'this is err';
     childLogger.err(message);
-    expect(mockLog).toHaveBeenCalledWith('root:sub1 - err: ' + message);
+    expect(mockLog).toHaveBeenCalledWith('root:child1 - err: ' + message);
   });
 
   test('child warning', () => {
     const message = 'this is warning';
     childLogger.warning(message);
-    expect(mockLog).toHaveBeenCalledWith('root:sub1 - warning: ' + message);
+    expect(mockLog).toHaveBeenCalledWith('root:child1 - warning: ' + message);
   });
 
   test('child notice', () => {
@@ -115,5 +115,5 @@ describe('logger names', () => {
     expect(() => getLogger({ name: '0', handlers: [] })).toThrowError());
 
   test('invalid child name', () =>
-    expect(() => rootLogger.getLogger({ name: '0' })).toThrowError());
+    expect(() => rootLogger.getLogger({ name: 'root:child1' })).toThrowError());
 });
