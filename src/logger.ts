@@ -18,7 +18,10 @@ const log = (logger: Logger, msg: Message, handler: Handler) => {
     return;
   }
 
-  handler.transporter(logger, handler.formatter(logger, msg));
+  handler.transporter(logger, {
+    ...msg,
+    formatted: handler.formatter(logger, msg),
+  });
 };
 
 const logHandlers = (logger: Logger, msg: Message, handlers: Handlers) => {
@@ -40,7 +43,6 @@ const getLoggerWithChain: GetLoggerWithChain = (
   const logger: Logger = {
     name,
     nameChain: newNameChain,
-    chainedName: newNameChain.join(':'),
   } as const;
 
   const getChildLogger: GetChildLogger = ({

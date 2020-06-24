@@ -1,8 +1,6 @@
 import { Formatter } from './types';
 
-const textFormatter: Formatter = (logger, msg) => ({
-  ...msg,
-  formatted: `${logger.nameChain.join(':')} - ${msg.level}: ${msg.raw}`,
-});
+const textFormatter: Formatter = (logger, msg) =>
+  `${logger.nameChain.join(':')} - ${msg.level}: ${msg.raw}`;
 
 export { textFormatter };

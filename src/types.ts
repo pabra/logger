@@ -16,7 +16,6 @@ type Log = (message: string) => void;
 type Logger = {
   readonly name: string;
   readonly nameChain: LoggerNameChain;
-  readonly chainedName: string;
 };
 interface Message {
   readonly raw: string;
@@ -30,7 +29,7 @@ interface MessageFormatted extends Message {
 type Filter = (logger: Logger, message: Message) => boolean;
 
 // a Formatter formats the raw message into a string that will be logged
-type Formatter = (logger: Logger, message: Message) => MessageFormatted;
+type Formatter = (logger: Logger, message: Message) => string;
 
 // a Transporter takes the formatted message and "transports" it to console, filesystem, network, etc
 type Transporter = (logger: Logger, message: MessageFormatted) => void;
