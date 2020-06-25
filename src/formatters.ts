@@ -1,9 +1,40 @@
 import { logLevels } from './levels';
-import { Formatter } from './types';
+import { Formatter, Logger, Message } from './types';
+import { safeStringify } from './utils';
 
-const textFormatter: Formatter = (logger, msg) =>
+const getTextPrefix = (logger: Logger, msg: Message) =>
   `${logger.nameChain.join('.')} ${logLevels[
     msg.level
   ].severity.toUpperCase()}: ${msg.raw}`;
 
-export { textFormatter };
+const textWithoutDataFormatter: Formatter = (logger, msg) =>
+  getTextPrefix(logger, msg);
+
+const getTextFormatter = (maxLength = 1024 ^ 2): Formatter => (logger, msg) => {
+  const log = `${getTextPrefix(logger, msg)}${
+    msg.data.length ? ` ${safeStringify(msg.data)}` : ''
+  }`;
+
+  return log.length > maxLength ? log.substr(0, maxLength - 3) + '...' : log;
+};
+
+const getJsonFormatter = (maxLength = 1024 ^ 2): Formatter => (
+  { name, nameChain },
+  msg,
+) => {
+  const levelEntry = logLevels[msg.level];
+  const jsonData = {
+    name,
+    nameChain,
+    level: msg.level,
+    levelValue: levelEntry.value,
+    levelServerity: levelEntry.severity,
+    message: msg.raw,
+    data: msg.data,
+  };
+  const log = safeStringify(jsonData);
+
+  return log.length > maxLength ? log.substr(0, maxLength - 3) + '...' : log;
+};
+
+export { getJsonFormatter, getTextFormatter, textWithoutDataFormatter };

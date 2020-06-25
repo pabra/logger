@@ -64,5 +64,7 @@
     "typescript": "^3.9.5"
   },
   "peerDependencies": {},
-  "dependencies": {}
+  "dependencies": {
+    "fast-safe-stringify": "^2.0.7"
+  }
 }

@@ -1,11 +1,11 @@
 import { getMaxLevelFilter } from './filters';
-import { textFormatter } from './formatters';
+import { textWithoutDataFormatter } from './formatters';
 import { consoleTransporter } from './transporters';
 import { Handler } from './types';
 
 const consoleTextHandler: Handler = {
   filter: getMaxLevelFilter('warning'),
-  formatter: textFormatter,
+  formatter: textWithoutDataFormatter,
   transporter: consoleTransporter,
 };
 

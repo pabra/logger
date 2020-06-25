@@ -2,7 +2,11 @@
 import { getLogger } from './logger';
 
 export { getMaxLevelFilter } from './filters';
-export { textFormatter } from './formatters';
+export {
+  getJsonFormatter,
+  getTextFormatter,
+  textWithoutDataFormatter,
+} from './formatters';
 export { consoleTextHandler } from './handlers';
 export { logLevels } from './levels';
 export { consoleTransporter } from './transporters';

@@ -7,20 +7,20 @@ const consoleTransporter: Transporter = (_logger, msg) => {
     case 'alert':
     case 'crit':
     case 'err':
-      console.error(msg.formatted);
+      console.error(msg.formatted, ...msg.data);
       break;
 
     case 'warning':
-      console.warn(msg.formatted);
+      console.warn(msg.formatted, ...msg.data);
       break;
 
     case 'notice':
     case 'info':
-      console.info(msg.formatted);
+      console.info(msg.formatted, ...msg.data);
       break;
 
     case 'debug':
-      console.debug(msg.formatted);
+      console.debug(msg.formatted, ...msg.data);
       break;
 
     default:

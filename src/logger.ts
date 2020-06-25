@@ -52,15 +52,22 @@ const getLoggerWithChain: GetLoggerWithChain = (
 
   return {
     getLogger: getChildLogger,
-    emerg: msg => logHandlers(logger, { raw: msg, level: 'emerg' }, handlers),
-    alert: msg => logHandlers(logger, { raw: msg, level: 'alert' }, handlers),
-    crit: msg => logHandlers(logger, { raw: msg, level: 'crit' }, handlers),
-    err: msg => logHandlers(logger, { raw: msg, level: 'err' }, handlers),
-    warning: msg =>
-      logHandlers(logger, { raw: msg, level: 'warning' }, handlers),
-    notice: msg => logHandlers(logger, { raw: msg, level: 'notice' }, handlers),
-    info: msg => logHandlers(logger, { raw: msg, level: 'info' }, handlers),
-    debug: msg => logHandlers(logger, { raw: msg, level: 'debug' }, handlers),
+    emerg: (msg, ...data) =>
+      logHandlers(logger, { raw: msg, data, level: 'emerg' }, handlers),
+    alert: (msg, ...data) =>
+      logHandlers(logger, { raw: msg, data, level: 'alert' }, handlers),
+    crit: (msg, ...data) =>
+      logHandlers(logger, { raw: msg, data, level: 'crit' }, handlers),
+    err: (msg, ...data) =>
+      logHandlers(logger, { raw: msg, data, level: 'err' }, handlers),
+    warning: (msg, ...data) =>
+      logHandlers(logger, { raw: msg, data, level: 'warning' }, handlers),
+    notice: (msg, ...data) =>
+      logHandlers(logger, { raw: msg, data, level: 'notice' }, handlers),
+    info: (msg, ...data) =>
+      logHandlers(logger, { raw: msg, data, level: 'info' }, handlers),
+    debug: (msg, ...data) =>
+      logHandlers(logger, { raw: msg, data, level: 'debug' }, handlers),
   };
 };
 
