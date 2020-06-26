@@ -7,7 +7,11 @@ export {
   getTextFormatter,
   textWithoutDataFormatter,
 } from './formatters';
-export { consoleTextHandler } from './handlers';
+export {
+  consoleJsonHandler,
+  consoleTextHandler,
+  consoleTextWithoutDataHandler,
+} from './handlers';
 export { logLevels } from './levels';
 export { consoleTransporter } from './transporters';
 export type { Filter, Formatter, Handler, Transporter } from './types';

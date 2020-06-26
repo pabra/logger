@@ -1,4 +1,7 @@
-import getLogger, { consoleTextHandler, getMaxLevelFilter } from '../index';
+import getLogger, {
+  consoleTextWithoutDataHandler,
+  getMaxLevelFilter,
+} from '../index';
 
 describe('tests involving console.log', () => {
   const originalConsoleLog = console.log;
@@ -19,7 +22,7 @@ describe('tests involving console.log', () => {
   console.warn = logIndicatorWarn;
   console.error = logIndicatorError;
 
-  const logger = getLogger({ handlers: [consoleTextHandler] });
+  const logger = getLogger({ handlers: [consoleTextWithoutDataHandler] });
 
   afterEach(() => {
     logIndicatorLog.mockReset();
@@ -212,7 +215,9 @@ describe('tests involving console.log', () => {
   });
 
   const consoleAllChildLogger = childLogger.getLogger({
-    handlers: [{ ...consoleTextHandler, filter: getMaxLevelFilter('debug') }],
+    handlers: [
+      { ...consoleTextWithoutDataHandler, filter: getMaxLevelFilter('debug') },
+    ],
   });
 
   test('child2 emerg', () => {
@@ -305,6 +310,24 @@ describe('tests involving console.log', () => {
     expect(logIndicatorLog).not.toHaveBeenCalled();
     expect(logIndicatorDebug).toHaveBeenCalledWith(
       'root.child1.child2 DEBUG: ' + message,
+    );
+    expect(logIndicatorInfo).not.toHaveBeenCalled();
+    expect(logIndicatorWarn).not.toHaveBeenCalled();
+    expect(logIndicatorError).not.toHaveBeenCalled();
+  });
+
+  // test with data
+
+  test('child2 debug with data', () => {
+    const message = 'this is debug with data';
+    const data = [{ a: 1 }, [3, 4, 5], new Error('boom')];
+    consoleAllChildLogger.debug(message, ...data);
+    expect(logIndicatorLog).not.toHaveBeenCalled();
+    expect(logIndicatorDebug).toHaveBeenCalledWith(
+      'root.child1.child2 DEBUG: ' + message,
+      data[0],
+      data[1],
+      data[2],
     );
     expect(logIndicatorInfo).not.toHaveBeenCalled();
     expect(logIndicatorWarn).not.toHaveBeenCalled();

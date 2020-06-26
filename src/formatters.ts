@@ -12,7 +12,9 @@ const textWithoutDataFormatter: Formatter = (logger, msg) =>
 
 const getTextFormatter = (maxLength = 1024 ^ 2): Formatter => (logger, msg) => {
   const log = `${getTextPrefix(logger, msg)}${
-    msg.data.length ? ` ${safeStringify(msg.data)}` : ''
+    msg.data.length
+      ? ` ${msg.data.map(data => safeStringify(data)).join(' ')}`
+      : ''
   }`;
 
   return log.length > maxLength ? log.substr(0, maxLength - 3) + '...' : log;
