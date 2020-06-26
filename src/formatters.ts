@@ -7,6 +7,9 @@ const getTextPrefix = (logger: Logger, msg: Message) =>
     msg.level
   ].severity.toUpperCase()}: ${msg.raw}`;
 
+const limitLength = (text: string, lenght: number) =>
+  text.length > lenght ? text.substr(0, lenght - 3) + '...' : text;
+
 const textWithoutDataFormatter: Formatter = (logger, msg) =>
   getTextPrefix(logger, msg);
 
@@ -17,7 +20,7 @@ const getTextFormatter = (maxLength = 1024 ^ 2): Formatter => (logger, msg) => {
       : ''
   }`;
 
-  return log.length > maxLength ? log.substr(0, maxLength - 3) + '...' : log;
+  return limitLength(log, maxLength);
 };
 
 const getJsonFormatter = (maxLength = 1024 ^ 2): Formatter => (
@@ -34,9 +37,8 @@ const getJsonFormatter = (maxLength = 1024 ^ 2): Formatter => (
     message: msg.raw,
     data: msg.data,
   };
-  const log = safeStringify(jsonData);
 
-  return log.length > maxLength ? log.substr(0, maxLength - 3) + '...' : log;
+  return limitLength(safeStringify(jsonData), maxLength);
 };
 
 export { getJsonFormatter, getTextFormatter, textWithoutDataFormatter };
