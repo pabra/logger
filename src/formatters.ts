@@ -2,11 +2,14 @@ import { logLevels } from './levels';
 import { Formatter, Logger, Message } from './types';
 import { safeStringify } from './utils';
 
-const getTextPrefix = (logger: Logger, msg: Message) =>
-  `${logger.nameChain.join('.')} ${logLevels[
-    msg.level
-  ].severity.toUpperCase()}: ${msg.raw}`;
+const getLogTime = () => new Date().toISOString();
 
+const getTextPrefix = (logger: Logger, msg: Message) =>
+  `${getLogTime()} [${logger.nameChain.join('.')}] ${logLevels[
+    msg.level
+  ].severity.toUpperCase()} - ${msg.raw}`;
+
+// FIXME: do not just cut off stringified JSON (won't be parsable anymore)
 const limitLength = (text: string, lenght: number) =>
   text.length > lenght ? text.substr(0, lenght - 3) + '...' : text;
 
@@ -31,6 +34,7 @@ const getJsonFormatter = (maxLength = 1024 ^ 2): Formatter => (
   const jsonData = {
     name,
     nameChain,
+    time: getLogTime(),
     level: msg.level,
     levelValue: levelEntry.value,
     levelServerity: levelEntry.severity,

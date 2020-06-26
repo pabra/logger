@@ -1,3 +1,4 @@
+import MockDate from 'mockdate';
 import getLogger, {
   Filter,
   getTextFormatter,
@@ -6,8 +7,11 @@ import getLogger, {
 } from '../index';
 
 describe('text formatter', () => {
+  const mockDate = new Date();
+  const mockDateIso = mockDate.toISOString();
+  MockDate.set(mockDate);
   const logIndicator = jest.fn();
-  const maxLength = 100;
+  const maxLength = 123;
   const filter: Filter = () => true;
   const transporter: Transporter = (_logger, msg) =>
     logIndicator(msg.formatted);
@@ -17,25 +21,29 @@ describe('text formatter', () => {
     transporter,
   };
   const handlers = [handler];
-  const name = 'loggerName';
+  const name = 'myApp';
   const logger = getLogger({ name, handlers });
 
   afterEach(() => {
     logIndicator.mockReset();
   });
 
+  afterAll(() => {
+    MockDate.reset();
+  });
+
   test('just message', () => {
-    const prefix = 'loggerName WARNING: ';
+    const prefix = `${mockDateIso} [myApp] WARNING - `;
     const message = 'this is info';
     logger.warning(message);
     expect(logIndicator).toBeCalledWith(prefix + message);
   });
 
   test('maxLength long message', () => {
-    const prefix = 'loggerName WARNING: ';
+    const prefix = `${mockDateIso} [myApp] WARNING - `;
     const message = new Array(8)
       .fill(null)
-      .map((_v, k) => `${String(k + 1).padStart(2, '0')} message`)
+      .map((_v, k) => `${String(k + 1).padStart(2, '0')}message+`)
       .join('');
     logger.warning(message);
     expect((prefix + message).length).toBe(maxLength);
@@ -43,13 +51,14 @@ describe('text formatter', () => {
   });
 
   test('too long message', () => {
-    const prefix = 'loggerName WARNING: ';
+    const prefix = `${mockDateIso} [myApp] WARNING - `;
     const message = new Array(9)
       .fill(null)
-      .map((_v, k) => `${String(k + 1).padStart(2, '0')} message`)
+      .map((_v, k) => `${String(k + 1).padStart(2, '0')}message+`)
       .join('');
     const expectation =
-      'loggerName WARNING: 01 message02 message03 message04 message05 message06 message07 message08 mess...';
+      prefix +
+      '01message+02message+03message+04message+05message+06message+07message+08messa...';
     logger.warning(message);
     expect((prefix + message).length).toBe(maxLength + 10);
     expect(expectation.length).toBe(maxLength);
@@ -57,21 +66,21 @@ describe('text formatter', () => {
   });
 
   test('message with data', () => {
-    const prefix = 'loggerName WARNING: ';
+    const prefix = `${mockDateIso} [myApp] WARNING - `;
     const message = 'msg';
     logger.warning(message, { a: 1 });
     expect(logIndicator).toBeCalledWith(prefix + message + ' {"a":1}');
   });
 
   test('message with multiple data', () => {
-    const prefix = 'loggerName WARNING: ';
+    const prefix = `${mockDateIso} [myApp] WARNING - `;
     const message = 'msg';
     logger.warning(message, { a: 1 }, { b: 2 });
     expect(logIndicator).toBeCalledWith(prefix + message + ' {"a":1} {"b":2}');
   });
 
   test('message with error', () => {
-    const prefix = 'loggerName WARNING: ';
+    const prefix = `${mockDateIso} [myApp] WARNING - `;
     const message = 'msg';
     const error = new Error('boom');
     error.stack = 'dummy';
@@ -82,7 +91,7 @@ describe('text formatter', () => {
   });
 
   test('message with error in object', () => {
-    const prefix = 'loggerName WARNING: ';
+    const prefix = `${mockDateIso} [myApp] WARNING - `;
     const message = 'msg';
     const error = new Error('boom');
     error.stack = 'dummy';
@@ -95,7 +104,7 @@ describe('text formatter', () => {
   });
 
   test('message with complex data', () => {
-    const prefix = 'loggerName WARNING: ';
+    const prefix = `${mockDateIso} [myApp] WARNING - `;
     const message = 'msg';
     logger.warning(message, ['a', { b: 2 }, true, Symbol('x')]);
     expect(logIndicator).toBeCalledWith(
@@ -104,7 +113,7 @@ describe('text formatter', () => {
   });
 
   test('message with too long data', () => {
-    const prefix = 'loggerName WARNING: ';
+    const prefix = `${mockDateIso} [myApp] WARNING - `;
     const message = 'msg';
     logger.warning(
       message,

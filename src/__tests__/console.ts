@@ -1,9 +1,14 @@
+import MockDate from 'mockdate';
 import getLogger, {
   consoleTextWithoutDataHandler,
   getMaxLevelFilter,
 } from '../index';
 
 describe('tests involving console.log', () => {
+  const mockDate = new Date();
+  const mockDateIso = mockDate.toISOString();
+  MockDate.set(mockDate);
+
   const originalConsoleLog = console.log;
   const originalConsoleDebug = console.debug;
   const originalConsoleInfo = console.info;
@@ -38,57 +43,61 @@ describe('tests involving console.log', () => {
     console.info = originalConsoleInfo;
     console.warn = originalConsoleWarn;
     console.error = originalConsoleError;
+    MockDate.reset();
   });
 
   test('root emerg', () => {
+    const prefix = `${mockDateIso} [root] EMERGENCY - `;
     const message = 'this is emergency';
     logger.emerg(message);
     expect(logIndicatorLog).not.toHaveBeenCalled();
     expect(logIndicatorDebug).not.toHaveBeenCalled();
     expect(logIndicatorInfo).not.toHaveBeenCalled();
     expect(logIndicatorWarn).not.toHaveBeenCalled();
-    expect(logIndicatorError).toHaveBeenCalledWith(
-      'root EMERGENCY: ' + message,
-    );
+    expect(logIndicatorError).toHaveBeenCalledWith(prefix + message);
   });
 
   test('root alert', () => {
+    const prefix = `${mockDateIso} [root] ALERT - `;
     const message = 'this is alert';
     logger.alert(message);
     expect(logIndicatorLog).not.toHaveBeenCalled();
     expect(logIndicatorDebug).not.toHaveBeenCalled();
     expect(logIndicatorInfo).not.toHaveBeenCalled();
     expect(logIndicatorWarn).not.toHaveBeenCalled();
-    expect(logIndicatorError).toHaveBeenCalledWith('root ALERT: ' + message);
+    expect(logIndicatorError).toHaveBeenCalledWith(prefix + message);
   });
 
   test('root crit', () => {
+    const prefix = `${mockDateIso} [root] CRITICAL - `;
     const message = 'this is crit';
     logger.crit(message);
     expect(logIndicatorLog).not.toHaveBeenCalled();
     expect(logIndicatorDebug).not.toHaveBeenCalled();
     expect(logIndicatorInfo).not.toHaveBeenCalled();
     expect(logIndicatorWarn).not.toHaveBeenCalled();
-    expect(logIndicatorError).toHaveBeenCalledWith('root CRITICAL: ' + message);
+    expect(logIndicatorError).toHaveBeenCalledWith(prefix + message);
   });
 
   test('root err', () => {
+    const prefix = `${mockDateIso} [root] ERROR - `;
     const message = 'this is err';
     logger.err(message);
     expect(logIndicatorLog).not.toHaveBeenCalled();
     expect(logIndicatorDebug).not.toHaveBeenCalled();
     expect(logIndicatorInfo).not.toHaveBeenCalled();
     expect(logIndicatorWarn).not.toHaveBeenCalled();
-    expect(logIndicatorError).toHaveBeenCalledWith('root ERROR: ' + message);
+    expect(logIndicatorError).toHaveBeenCalledWith(prefix + message);
   });
 
   test('root warning', () => {
+    const prefix = `${mockDateIso} [root] WARNING - `;
     const message = 'this is warning';
     logger.warning(message);
     expect(logIndicatorLog).not.toHaveBeenCalled();
     expect(logIndicatorDebug).not.toHaveBeenCalled();
     expect(logIndicatorInfo).not.toHaveBeenCalled();
-    expect(logIndicatorWarn).toHaveBeenCalledWith('root WARNING: ' + message);
+    expect(logIndicatorWarn).toHaveBeenCalledWith(prefix + message);
     expect(logIndicatorError).not.toHaveBeenCalled();
   });
 
@@ -125,62 +134,57 @@ describe('tests involving console.log', () => {
   const childLogger = logger.getLogger();
 
   test('child emerg', () => {
+    const prefix = `${mockDateIso} [root.child1] EMERGENCY - `;
     const message = 'this is emergency';
     childLogger.emerg(message);
     expect(logIndicatorLog).not.toHaveBeenCalled();
     expect(logIndicatorDebug).not.toHaveBeenCalled();
     expect(logIndicatorInfo).not.toHaveBeenCalled();
     expect(logIndicatorWarn).not.toHaveBeenCalled();
-    expect(logIndicatorError).toHaveBeenCalledWith(
-      'root.child1 EMERGENCY: ' + message,
-    );
+    expect(logIndicatorError).toHaveBeenCalledWith(prefix + message);
   });
 
   test('child alert', () => {
+    const prefix = `${mockDateIso} [root.child1] ALERT - `;
     const message = 'this is alert';
     childLogger.alert(message);
     expect(logIndicatorLog).not.toHaveBeenCalled();
     expect(logIndicatorDebug).not.toHaveBeenCalled();
     expect(logIndicatorInfo).not.toHaveBeenCalled();
     expect(logIndicatorWarn).not.toHaveBeenCalled();
-    expect(logIndicatorError).toHaveBeenCalledWith(
-      'root.child1 ALERT: ' + message,
-    );
+    expect(logIndicatorError).toHaveBeenCalledWith(prefix + message);
   });
 
   test('child crit', () => {
+    const prefix = `${mockDateIso} [root.child1] CRITICAL - `;
     const message = 'this is crit';
     childLogger.crit(message);
     expect(logIndicatorLog).not.toHaveBeenCalled();
     expect(logIndicatorDebug).not.toHaveBeenCalled();
     expect(logIndicatorInfo).not.toHaveBeenCalled();
     expect(logIndicatorWarn).not.toHaveBeenCalled();
-    expect(logIndicatorError).toHaveBeenCalledWith(
-      'root.child1 CRITICAL: ' + message,
-    );
+    expect(logIndicatorError).toHaveBeenCalledWith(prefix + message);
   });
 
   test('child err', () => {
+    const prefix = `${mockDateIso} [root.child1] ERROR - `;
     const message = 'this is err';
     childLogger.err(message);
     expect(logIndicatorLog).not.toHaveBeenCalled();
     expect(logIndicatorDebug).not.toHaveBeenCalled();
     expect(logIndicatorInfo).not.toHaveBeenCalled();
     expect(logIndicatorWarn).not.toHaveBeenCalled();
-    expect(logIndicatorError).toHaveBeenCalledWith(
-      'root.child1 ERROR: ' + message,
-    );
+    expect(logIndicatorError).toHaveBeenCalledWith(prefix + message);
   });
 
   test('child warning', () => {
+    const prefix = `${mockDateIso} [root.child1] WARNING - `;
     const message = 'this is warning';
     childLogger.warning(message);
     expect(logIndicatorLog).not.toHaveBeenCalled();
     expect(logIndicatorDebug).not.toHaveBeenCalled();
     expect(logIndicatorInfo).not.toHaveBeenCalled();
-    expect(logIndicatorWarn).toHaveBeenCalledWith(
-      'root.child1 WARNING: ' + message,
-    );
+    expect(logIndicatorWarn).toHaveBeenCalledWith(prefix + message);
     expect(logIndicatorError).not.toHaveBeenCalled();
   });
 
@@ -221,96 +225,88 @@ describe('tests involving console.log', () => {
   });
 
   test('child2 emerg', () => {
+    const prefix = `${mockDateIso} [root.child1.child2] EMERGENCY - `;
     const message = 'this is emergency';
     consoleAllChildLogger.emerg(message);
     expect(logIndicatorLog).not.toHaveBeenCalled();
     expect(logIndicatorDebug).not.toHaveBeenCalled();
     expect(logIndicatorInfo).not.toHaveBeenCalled();
     expect(logIndicatorWarn).not.toHaveBeenCalled();
-    expect(logIndicatorError).toHaveBeenCalledWith(
-      'root.child1.child2 EMERGENCY: ' + message,
-    );
+    expect(logIndicatorError).toHaveBeenCalledWith(prefix + message);
   });
 
   test('child2 alert', () => {
+    const prefix = `${mockDateIso} [root.child1.child2] ALERT - `;
     const message = 'this is alert';
     consoleAllChildLogger.alert(message);
     expect(logIndicatorLog).not.toHaveBeenCalled();
     expect(logIndicatorDebug).not.toHaveBeenCalled();
     expect(logIndicatorInfo).not.toHaveBeenCalled();
     expect(logIndicatorWarn).not.toHaveBeenCalled();
-    expect(logIndicatorError).toHaveBeenCalledWith(
-      'root.child1.child2 ALERT: ' + message,
-    );
+    expect(logIndicatorError).toHaveBeenCalledWith(prefix + message);
   });
 
   test('child2 crit', () => {
+    const prefix = `${mockDateIso} [root.child1.child2] CRITICAL - `;
     const message = 'this is crit';
     consoleAllChildLogger.crit(message);
     expect(logIndicatorLog).not.toHaveBeenCalled();
     expect(logIndicatorDebug).not.toHaveBeenCalled();
     expect(logIndicatorInfo).not.toHaveBeenCalled();
     expect(logIndicatorWarn).not.toHaveBeenCalled();
-    expect(logIndicatorError).toHaveBeenCalledWith(
-      'root.child1.child2 CRITICAL: ' + message,
-    );
+    expect(logIndicatorError).toHaveBeenCalledWith(prefix + message);
   });
 
   test('child2 err', () => {
+    const prefix = `${mockDateIso} [root.child1.child2] ERROR - `;
     const message = 'this is err';
     consoleAllChildLogger.err(message);
     expect(logIndicatorLog).not.toHaveBeenCalled();
     expect(logIndicatorDebug).not.toHaveBeenCalled();
     expect(logIndicatorInfo).not.toHaveBeenCalled();
     expect(logIndicatorWarn).not.toHaveBeenCalled();
-    expect(logIndicatorError).toHaveBeenCalledWith(
-      'root.child1.child2 ERROR: ' + message,
-    );
+    expect(logIndicatorError).toHaveBeenCalledWith(prefix + message);
   });
 
   test('child2 warning', () => {
+    const prefix = `${mockDateIso} [root.child1.child2] WARNING - `;
     const message = 'this is warning';
     consoleAllChildLogger.warning(message);
     expect(logIndicatorLog).not.toHaveBeenCalled();
     expect(logIndicatorDebug).not.toHaveBeenCalled();
     expect(logIndicatorInfo).not.toHaveBeenCalled();
-    expect(logIndicatorWarn).toHaveBeenCalledWith(
-      'root.child1.child2 WARNING: ' + message,
-    );
+    expect(logIndicatorWarn).toHaveBeenCalledWith(prefix + message);
     expect(logIndicatorError).not.toHaveBeenCalled();
   });
 
   test('child2 notice', () => {
+    const prefix = `${mockDateIso} [root.child1.child2] NOTICE - `;
     const message = 'this is notice';
     consoleAllChildLogger.notice(message);
     expect(logIndicatorLog).not.toHaveBeenCalled();
     expect(logIndicatorDebug).not.toHaveBeenCalled();
-    expect(logIndicatorInfo).toHaveBeenCalledWith(
-      'root.child1.child2 NOTICE: ' + message,
-    );
+    expect(logIndicatorInfo).toHaveBeenCalledWith(prefix + message);
     expect(logIndicatorWarn).not.toHaveBeenCalled();
     expect(logIndicatorError).not.toHaveBeenCalled();
   });
 
   test('child2 info', () => {
+    const prefix = `${mockDateIso} [root.child1.child2] INFORMATIONAL - `;
     const message = 'this is info';
     consoleAllChildLogger.info(message);
     expect(logIndicatorLog).not.toHaveBeenCalled();
     expect(logIndicatorDebug).not.toHaveBeenCalled();
-    expect(logIndicatorInfo).toHaveBeenCalledWith(
-      'root.child1.child2 INFORMATIONAL: ' + message,
-    );
+    expect(logIndicatorInfo).toHaveBeenCalledWith(prefix + message);
     expect(logIndicatorWarn).not.toHaveBeenCalled();
     expect(logIndicatorError).not.toHaveBeenCalled();
   });
 
   test('child2 debug', () => {
+    const prefix = `${mockDateIso} [root.child1.child2] DEBUG - `;
     const message = 'this is debug';
     consoleAllChildLogger.debug(message);
     expect(logIndicatorLog).not.toHaveBeenCalled();
-    expect(logIndicatorDebug).toHaveBeenCalledWith(
-      'root.child1.child2 DEBUG: ' + message,
-    );
+    expect(logIndicatorDebug).toHaveBeenCalledWith(prefix + message);
     expect(logIndicatorInfo).not.toHaveBeenCalled();
     expect(logIndicatorWarn).not.toHaveBeenCalled();
     expect(logIndicatorError).not.toHaveBeenCalled();
@@ -319,12 +315,13 @@ describe('tests involving console.log', () => {
   // test with data
 
   test('child2 debug with data', () => {
+    const prefix = `${mockDateIso} [root.child1.child2] DEBUG - `;
     const message = 'this is debug with data';
     const data = [{ a: 1 }, [3, 4, 5], new Error('boom')];
     consoleAllChildLogger.debug(message, ...data);
     expect(logIndicatorLog).not.toHaveBeenCalled();
     expect(logIndicatorDebug).toHaveBeenCalledWith(
-      'root.child1.child2 DEBUG: ' + message,
+      prefix + message,
       data[0],
       data[1],
       data[2],
