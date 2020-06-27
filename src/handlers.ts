@@ -4,10 +4,14 @@ import {
   getTextFormatter,
   textWithoutDataFormatter,
 } from './formatters';
-import { consoleTransporter } from './transporters';
+import {
+  consoleTransporter,
+  consoleWithoutDataTransporter,
+} from './transporters';
 import { Handler } from './types';
 
-const consoleTextWithoutDataHandler: Handler = {
+// will pass raw data to console.log without convertinf to JSON or text
+const consoleRawDataHandler: Handler = {
   filter: getMaxLevelFilter('warning'),
   formatter: textWithoutDataFormatter,
   transporter: consoleTransporter,
@@ -16,17 +20,13 @@ const consoleTextWithoutDataHandler: Handler = {
 const consoleTextHandler: Handler = {
   filter: getMaxLevelFilter('warning'),
   formatter: getTextFormatter(),
-  transporter: consoleTransporter,
+  transporter: consoleWithoutDataTransporter,
 };
 
 const consoleJsonHandler: Handler = {
   filter: getMaxLevelFilter('warning'),
   formatter: getJsonFormatter(),
-  transporter: consoleTransporter,
+  transporter: consoleWithoutDataTransporter,
 };
 
-export {
-  consoleJsonHandler,
-  consoleTextWithoutDataHandler,
-  consoleTextHandler,
-};
+export { consoleJsonHandler, consoleRawDataHandler, consoleTextHandler };

@@ -1,6 +1,7 @@
 import MockDate from 'mockdate';
 import getLogger, {
-  consoleTextWithoutDataHandler,
+  consoleRawDataHandler,
+  consoleTextHandler,
   getMaxLevelFilter,
 } from '../index';
 
@@ -27,7 +28,7 @@ describe('tests involving console.log', () => {
   console.warn = logIndicatorWarn;
   console.error = logIndicatorError;
 
-  const logger = getLogger({ handlers: [consoleTextWithoutDataHandler] });
+  const logger = getLogger({ handlers: [consoleRawDataHandler] });
 
   afterEach(() => {
     logIndicatorLog.mockReset();
@@ -220,7 +221,7 @@ describe('tests involving console.log', () => {
 
   const consoleAllChildLogger = childLogger.getLogger({
     handlers: [
-      { ...consoleTextWithoutDataHandler, filter: getMaxLevelFilter('debug') },
+      { ...consoleRawDataHandler, filter: getMaxLevelFilter('debug') },
     ],
   });
 
@@ -332,5 +333,23 @@ describe('tests involving console.log', () => {
     expect(logIndicatorInfo).not.toHaveBeenCalled();
     expect(logIndicatorWarn).not.toHaveBeenCalled();
     expect(logIndicatorError).not.toHaveBeenCalled();
+  });
+
+  const consoleTextOnlyLogger = logger.getLogger({
+    handlers: [consoleTextHandler],
+  });
+
+  test('child3 debug with data', () => {
+    const prefix = `${mockDateIso} [root.child1] ERROR - `;
+    const message = 'this is debug with data';
+    const data = [42, false];
+    consoleTextOnlyLogger.err(message, ...data);
+    expect(logIndicatorLog).not.toHaveBeenCalled();
+    expect(logIndicatorDebug).not.toHaveBeenCalled();
+    expect(logIndicatorInfo).not.toHaveBeenCalled();
+    expect(logIndicatorWarn).not.toHaveBeenCalled();
+    expect(logIndicatorError).toHaveBeenCalledWith(
+      prefix + message + ' 42 false',
+    );
   });
 });

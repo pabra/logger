@@ -9,8 +9,8 @@ export {
 } from './formatters';
 export {
   consoleJsonHandler,
+  consoleRawDataHandler,
   consoleTextHandler,
-  consoleTextWithoutDataHandler,
 } from './handlers';
 export { logLevels } from './levels';
 export { consoleTransporter } from './transporters';
