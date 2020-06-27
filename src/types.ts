@@ -2,16 +2,15 @@ import { logLevels } from './levels';
 
 type LogLevels = typeof logLevels;
 type LoggerNameChain = Readonly<string[]>;
-type Data = Readonly<any>;
-type DataArgs = Readonly<Data[]>;
-type Log = (message: string, ...args: DataArgs) => void;
+type DataArgs<T> = Readonly<T[]>;
+type Log = <Data extends any>(message: string, ...args: DataArgs<Data>) => void;
 type Logger = {
   readonly name: string;
   readonly nameChain: LoggerNameChain;
 };
 interface Message {
   readonly raw: string;
-  readonly data: DataArgs;
+  readonly data: DataArgs<any>;
   readonly level: keyof LogLevels;
 }
 interface MessageFormatted extends Message {

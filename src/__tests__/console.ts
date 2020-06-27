@@ -317,15 +317,18 @@ describe('tests involving console.log', () => {
   test('child2 debug with data', () => {
     const prefix = `${mockDateIso} [root.child1.child2] DEBUG - `;
     const message = 'this is debug with data';
-    const data = [{ a: 1 }, [3, 4, 5], new Error('boom')];
+    const data = [
+      { a: 1 },
+      [3, 4, 5],
+      new Error('boom'),
+      'immutable primitive',
+      42,
+      false,
+      Symbol('23'),
+    ];
     consoleAllChildLogger.debug(message, ...data);
     expect(logIndicatorLog).not.toHaveBeenCalled();
-    expect(logIndicatorDebug).toHaveBeenCalledWith(
-      prefix + message,
-      data[0],
-      data[1],
-      data[2],
-    );
+    expect(logIndicatorDebug).toHaveBeenCalledWith(prefix + message, ...data);
     expect(logIndicatorInfo).not.toHaveBeenCalled();
     expect(logIndicatorWarn).not.toHaveBeenCalled();
     expect(logIndicatorError).not.toHaveBeenCalled();
