@@ -54,6 +54,8 @@ const getLoggerWithChain: GetLoggerWithChain = (
 
   return {
     getLogger: getChildLogger,
+    logger,
+    handlers,
     emerg: (msg, ...data) =>
       logHandlers(logger, { raw: msg, data, level: 'emerg' }, handlers),
     alert: (msg, ...data) =>

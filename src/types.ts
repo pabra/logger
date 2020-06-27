@@ -36,6 +36,8 @@ type Handlers = Readonly<Handler[]>;
 
 type GetLoggerReturn = { [K in keyof LogLevels]: Log } & {
   getLogger: GetChildLogger;
+  logger: Logger;
+  handlers: Handlers;
 };
 
 type GetLoggerWithChain = (
