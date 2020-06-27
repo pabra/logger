@@ -3,6 +3,7 @@ import { Formatter, Logger, Message } from './types';
 import { safeStringify } from './utils';
 
 const getLogTime = () => new Date().toISOString();
+const oneMiB = Math.pow(1024, 2);
 
 const getTextPrefix = (logger: Logger, msg: Message) =>
   `${getLogTime()} [${logger.nameChain.join('.')}] ${logLevels[
@@ -16,7 +17,7 @@ const limitLength = (text: string, lenght: number) =>
 const textWithoutDataFormatter: Formatter = (logger, msg) =>
   getTextPrefix(logger, msg);
 
-const getTextFormatter = (maxLength = 1024 ^ 2): Formatter => (logger, msg) => {
+const getTextFormatter = (maxLength = oneMiB): Formatter => (logger, msg) => {
   const log = `${getTextPrefix(logger, msg)}${
     msg.data.length
       ? ` ${msg.data.map(data => safeStringify(data)).join(' ')}`
@@ -26,7 +27,7 @@ const getTextFormatter = (maxLength = 1024 ^ 2): Formatter => (logger, msg) => {
   return limitLength(log, maxLength);
 };
 
-const getJsonFormatter = (maxLength = 1024 ^ 2): Formatter => (
+const getJsonFormatter = (maxLength = oneMiB): Formatter => (
   { name, nameChain },
   msg,
 ) => {
