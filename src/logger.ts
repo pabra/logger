@@ -10,7 +10,7 @@ import {
   Message,
 } from './types';
 
-const validLoggerNameExp = /^[a-zA-Z][a-zA-Z0-9_]*$/;
+const validLoggerNameExp = /^[a-zA-Z][a-zA-Z0-9_-]*$/;
 const isValidLoggerName = (name: string) => validLoggerNameExp.test(name);
 
 const log = (logger: Logger, msg: Message, handler: Handler) => {
@@ -36,7 +36,9 @@ const getLoggerWithChain: GetLoggerWithChain = (
   nameChain,
 ): GetLoggerReturn => {
   if (!isValidLoggerName(name)) {
-    throw new Error('invalid name');
+    throw new Error(
+      `invalid name: '${name}' - must match regex '${validLoggerNameExp.source}'`,
+    );
   }
 
   const newNameChain: LoggerNameChain = [...nameChain, name] as const;
