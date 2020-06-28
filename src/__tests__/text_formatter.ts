@@ -32,9 +32,13 @@ describe('text formatter', () => {
     MockDate.reset();
   });
 
+  test('get handlers', () => {
+    expect(logger.getHandlers()).toBe(handlers);
+  });
+
   test('just message', () => {
     const prefix = `${mockDateIso} [myApp] WARNING - `;
-    const message = 'this is info';
+    const message = 'this is warning';
     logger.warning(message);
     expect(logIndicator).toBeCalledWith(prefix + message);
   });
@@ -124,5 +128,46 @@ describe('text formatter', () => {
         message +
         ' ["0123456789","0123456789","0123456789","0123456789","0123456789","012345...',
     );
+  });
+
+  test('child logger with same handlers', () => {
+    const childLogger = logger.getLogger({ name: 'child-1' });
+    const prefix = `${mockDateIso} [myApp.child-1] WARNING - `;
+    const message = 'this is warning 1';
+    childLogger.warning(message);
+    expect(logIndicator).toBeCalledWith(prefix + message);
+  });
+
+  test('another child logger with later exchanged handlers', () => {
+    const childLogger = logger.getLogger({ name: 'child-2' });
+    childLogger.setHandler({
+      ...childLogger.getHandlers()[0],
+      formatter: (loggerMeta, msg) =>
+        `[${loggerMeta.nameChain.join('/')}] msg: ${msg.raw}`,
+    });
+    const prefix = '[myApp/child-2] msg: ';
+    const message = 'this is warning 2';
+    childLogger.warning(message);
+    expect(logIndicator).toBeCalledWith(prefix + message);
+  });
+
+  test('another child logger with later added handler', () => {
+    const childLogger = logger.getLogger({ name: 'child-3' });
+    childLogger.addHandler({
+      ...childLogger.getHandlers()[0],
+      formatter: (loggerMeta, msg) =>
+        `[${loggerMeta.nameChain.join('/')}] msg: ${msg.raw}`,
+    });
+    const prefix1Warn = `${mockDateIso} [myApp.child-3] WARNING - `;
+    const prefix1Debug = `${mockDateIso} [myApp.child-3] DEBUG - `;
+    const prefix2 = '[myApp/child-3] msg: ';
+    const messageHandlerAdded =
+      'added 1 new handlers (2 handlers in total now)';
+    const message = 'this is warning 3';
+    childLogger.warning(message);
+    expect(logIndicator).toBeCalledWith(prefix1Debug + messageHandlerAdded);
+    expect(logIndicator).toBeCalledWith(prefix2 + messageHandlerAdded);
+    expect(logIndicator).toBeCalledWith(prefix1Warn + message);
+    expect(logIndicator).toBeCalledWith(prefix2 + message);
   });
 });
