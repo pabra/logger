@@ -14,5 +14,11 @@ export {
 } from './handlers';
 export { logLevels } from './levels';
 export { consoleTransporter } from './transporters';
-export type { Filter, Formatter, Handler, Transporter } from './types';
+export type {
+  Filter,
+  Formatter,
+  Handler,
+  Handlers,
+  Transporter,
+} from './types';
 export default getLogger;

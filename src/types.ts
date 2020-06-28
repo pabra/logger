@@ -7,6 +7,7 @@ type Log = <Data extends any>(message: string, ...args: DataArgs<Data>) => void;
 type Logger = {
   readonly name: string;
   readonly nameChain: LoggerNameChain;
+  readonly handlers: Handlers;
 };
 interface Message {
   readonly raw: string;
@@ -36,8 +37,9 @@ type Handlers = Readonly<Handler[]>;
 
 type GetLoggerReturn = { [K in keyof LogLevels]: Log } & {
   getLogger: GetChildLogger;
-  logger: Logger;
-  handlers: Handlers;
+  getHandlers: () => Handlers;
+  addHandler: (...handlers: Handlers) => void;
+  setHandler: (...handlers: Handlers) => void;
 };
 
 type GetLoggerWithChain = (

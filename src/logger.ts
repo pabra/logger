@@ -42,20 +42,23 @@ const getLoggerWithChain: GetLoggerWithChain = (
   }
 
   const newNameChain: LoggerNameChain = [...nameChain, name] as const;
-  const logger: Logger = {
+  const logger = {
     name,
     nameChain: newNameChain,
-  } as const;
+    handlers,
+  };
 
   const getChildLogger: GetChildLogger = ({
     name: childName = `child${logger.nameChain.length}`,
-    handlers: childHandlers = handlers,
+    handlers: childHandlers = logger.handlers,
   } = {}) => getLoggerWithChain(childName, childHandlers, logger.nameChain);
 
   return {
     getLogger: getChildLogger,
-    logger,
-    handlers,
+    getHandlers: () => logger.handlers,
+    addHandler: (...newHandlers) =>
+      (logger.handlers = [...logger.handlers, ...newHandlers]),
+    setHandler: (...newHandlers) => (logger.handlers = newHandlers),
     emerg: (msg, ...data) =>
       logHandlers(logger, { raw: msg, data, level: 'emerg' }, handlers),
     alert: (msg, ...data) =>
