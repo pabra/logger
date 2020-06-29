@@ -13,7 +13,10 @@ export {
   consoleTextHandler,
 } from './handlers';
 export { logLevels } from './levels';
-export { consoleTransporter } from './transporters';
+export {
+  consoleTransporter,
+  consoleWithoutDataTransporter,
+} from './transporters';
 export type {
   Filter,
   Formatter,
