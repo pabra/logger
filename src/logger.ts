@@ -1,6 +1,6 @@
+import { getConsoleRawDataHandler } from './handlers';
 import {
-  GetChildLogger,
-  GetLogger,
+  GetLoggerOverload,
   GetLoggerReturn,
   GetLoggerWithChain,
   Handler,
@@ -9,12 +9,14 @@ import {
   LoggerNameChain,
   Message,
 } from './types';
+import { isHandlers } from './utils';
 
 const validLoggerNameExp = /^[a-zA-Z][a-zA-Z0-9_-]*$/;
-const isValidLoggerName = (name: string) => validLoggerNameExp.test(name);
+const isValidLoggerName = (name: unknown) =>
+  typeof name === 'string' && validLoggerNameExp.test(name);
 
 const log = (logger: Logger, msg: Message, handler: Handler) => {
-  if (!handler.filter(logger, msg)) {
+  if (handler.filter && !handler.filter(logger, msg)) {
     return;
   }
 
@@ -48,10 +50,18 @@ const getLoggerWithChain: GetLoggerWithChain = (
     handlers,
   } as const;
 
-  const getChildLogger: GetChildLogger = ({
-    name: childName = `child${logger.nameChain.length}`,
-    handlers: childHandlers = logger.handlers,
-  } = {}) => getLoggerWithChain(childName, childHandlers, logger.nameChain);
+  const getChildLogger: GetLoggerOverload = (
+    childName: string,
+    maybeHandlerOrHandlers?: Handler | Handlers,
+  ) => {
+    const childHandlers = isHandlers(maybeHandlerOrHandlers)
+      ? maybeHandlerOrHandlers
+      : maybeHandlerOrHandlers
+      ? [maybeHandlerOrHandlers]
+      : logger.handlers;
+
+    return getLoggerWithChain(childName, childHandlers, logger.nameChain);
+  };
 
   return {
     getLogger: getChildLogger,
@@ -79,7 +89,15 @@ const getLoggerWithChain: GetLoggerWithChain = (
   };
 };
 
-const getLogger: GetLogger = ({ name = 'root', handlers }): GetLoggerReturn =>
-  getLoggerWithChain(name, handlers, []);
+const defaultHandler = getConsoleRawDataHandler();
 
-export { getLogger };
+export const getLogger: GetLoggerOverload = (
+  name: string,
+  maybeHandlerOrHandlers?: Handler | Handlers,
+) => {
+  const handlers = isHandlers(maybeHandlerOrHandlers)
+    ? maybeHandlerOrHandlers
+    : [maybeHandlerOrHandlers ?? defaultHandler];
+
+  return getLoggerWithChain(name, handlers, []);
+};

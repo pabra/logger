@@ -1,6 +1,8 @@
 import stringify from 'fast-safe-stringify';
+import { logLevels } from './levels';
+import { Handler, Handlers, LogLevelName } from './types';
 
-const assertNever = (x: never): never => {
+export const assertNever = (x: never): never => {
   throw new Error('Unexpected object: ' + x);
 };
 
@@ -15,6 +17,11 @@ const errorReplacer = (_key: string, value: any) =>
     : value;
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-const safeStringify = (data: any) => stringify(data, errorReplacer);
+export const safeStringify = (data: any) => stringify(data, errorReplacer);
 
-export { assertNever, safeStringify };
+export const isLogLevelName = (name: unknown): name is LogLevelName =>
+  typeof name === 'string' && name in logLevels;
+
+export const isHandlers = (
+  handlerOrHandlers: Handler | Handlers | undefined,
+): handlerOrHandlers is Handlers => Array.isArray(handlerOrHandlers);

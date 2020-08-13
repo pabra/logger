@@ -11,26 +11,25 @@ const getTextPrefix = (logger: Logger, msg: Message) =>
   ].severity.toUpperCase()} - ${msg.raw}`;
 
 // FIXME: do not just cut off stringified JSON (won't be parsable anymore)
-const limitLength = (text: string, lenght: number) =>
-  text.length > lenght ? text.substr(0, lenght - 3) + '...' : text;
+const limitLength = (text: string, length: number) =>
+  text.length > length ? text.substr(0, length - 3) + '...' : text;
 
-const textWithoutDataFormatter: Formatter = (logger, msg) =>
+export const textWithoutDataFormatter: Formatter = (logger, msg) =>
   getTextPrefix(logger, msg);
 
-const getTextFormatter = (maxLength = oneMiB): Formatter => (logger, msg) => {
-  const log = `${getTextPrefix(logger, msg)}${
+export const textFormatter: Formatter = (logger, msg) =>
+  `${getTextPrefix(logger, msg)}${
     msg.data.length
       ? ` ${msg.data.map(data => safeStringify(data)).join(' ')}`
       : ''
   }`;
 
-  return limitLength(log, maxLength);
-};
-
-const getJsonFormatter = (maxLength = oneMiB): Formatter => (
-  { name, nameChain },
+export const getTextLengthFormatter = (maxLength = oneMiB): Formatter => (
+  logger,
   msg,
-) => {
+) => limitLength(textFormatter(logger, msg), maxLength);
+
+export const jsonFormatter: Formatter = ({ name, nameChain }, msg) => {
   const levelEntry = logLevels[msg.level];
   const jsonData = {
     name,
@@ -43,7 +42,10 @@ const getJsonFormatter = (maxLength = oneMiB): Formatter => (
     data: msg.data,
   };
 
-  return limitLength(safeStringify(jsonData), maxLength);
+  return safeStringify(jsonData);
 };
 
-export { getJsonFormatter, getTextFormatter, textWithoutDataFormatter };
+export const getJsonLengthFormatter = (maxLength = oneMiB): Formatter => (
+  logger,
+  msg,
+) => limitLength(jsonFormatter(logger, msg), maxLength);

@@ -1,7 +1,7 @@
 import { Transporter } from './types';
 import { assertNever } from './utils';
 
-const consoleTransporter: Transporter = (_logger, msg) => {
+export const consoleTransporter: Transporter = (_logger, msg) => {
   switch (msg.level) {
     case 'emerg':
     case 'alert':
@@ -28,7 +28,7 @@ const consoleTransporter: Transporter = (_logger, msg) => {
   }
 };
 
-const consoleWithoutDataTransporter: Transporter = (_logger, msg) => {
+export const consoleWithoutDataTransporter: Transporter = (_logger, msg) => {
   switch (msg.level) {
     case 'emerg':
     case 'alert':
@@ -54,5 +54,3 @@ const consoleWithoutDataTransporter: Transporter = (_logger, msg) => {
       assertNever(msg.level);
   }
 };
-
-export { consoleTransporter, consoleWithoutDataTransporter };

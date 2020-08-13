@@ -1,22 +1,24 @@
 /* eslint-disable import/no-unused-modules */
-import { getLogger } from './logger';
-
-export { getMaxLevelFilter } from './filters';
-export {
-  getJsonFormatter,
-  getTextFormatter,
+import { getMaxLevelFilter } from './filters';
+import {
+  getJsonLengthFormatter,
+  getTextLengthFormatter,
+  jsonFormatter,
+  textFormatter,
   textWithoutDataFormatter,
 } from './formatters';
-export {
-  consoleJsonHandler,
-  consoleRawDataHandler,
-  consoleTextHandler,
+import {
+  getConsoleJsonHandler,
+  getConsoleRawDataHandler,
+  getConsoleTextHandler,
 } from './handlers';
-export { logLevels } from './levels';
-export {
+import { getLogger } from './logger';
+import {
   consoleTransporter,
   consoleWithoutDataTransporter,
 } from './transporters';
+
+export default getLogger;
 export type {
   Filter,
   Formatter,
@@ -24,4 +26,20 @@ export type {
   Handlers,
   Transporter,
 } from './types';
-export default getLogger;
+export const filters = { getMaxLevelFilter } as const;
+export const formatters = {
+  textWithoutDataFormatter,
+  textFormatter,
+  jsonFormatter,
+  getTextLengthFormatter,
+  getJsonLengthFormatter,
+} as const;
+export const transporters = {
+  consoleTransporter,
+  consoleWithoutDataTransporter,
+} as const;
+export const handlers = {
+  getConsoleTextHandler,
+  getConsoleRawDataHandler,
+  getConsoleJsonHandler,
+} as const;

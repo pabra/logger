@@ -1,5 +1,5 @@
 // https://en.wikipedia.org/wiki/Syslog#Severity_level
-const logLevels = {
+export const logLevels = {
   emerg: {
     // System is unusable
     value: 0,
@@ -41,5 +41,3 @@ const logLevels = {
     severity: 'Debug',
   },
 } as const;
-
-export { logLevels };
