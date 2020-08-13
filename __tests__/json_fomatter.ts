@@ -1,10 +1,5 @@
 import MockDate from 'mockdate';
-import getLogger, {
-  Filter,
-  getJsonFormatter,
-  Handler,
-  Transporter,
-} from '../index';
+import getLogger, { Filter, formatters, Handler, Transporter } from '../src';
 
 describe('text formatter', () => {
   const mockDate = new Date();
@@ -17,12 +12,12 @@ describe('text formatter', () => {
     logIndicator(msg.formatted);
   const handler: Handler = {
     filter,
-    formatter: getJsonFormatter(maxLength),
+    formatter: formatters.getJsonLengthFormatter(maxLength),
     transporter,
   };
   const handlers = [handler];
   const name = 'myApp';
-  const logger = getLogger({ name, handlers });
+  const logger = getLogger(name, handlers);
 
   afterEach(() => {
     logIndicator.mockReset();

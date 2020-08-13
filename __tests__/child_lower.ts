@@ -1,20 +1,15 @@
-import getLogger, { Formatter, getMaxLevelFilter, Transporter } from '../index';
+import getLogger, { filters, Formatter, Transporter } from '../src';
 
-describe('childlogger with higher levels', () => {
+describe('childlogger with lower levels', () => {
   const logIndicator = jest.fn();
   const formatter: Formatter = (logger, msg) =>
     `${logger.nameChain.join('+')} ${msg.level}: ${msg.raw}`;
   const transporter: Transporter = (_logger, { formatted }) =>
     logIndicator(formatted);
-  const rootLogger = getLogger({
-    name: 'main',
-    handlers: [
-      {
-        filter: getMaxLevelFilter('err'),
-        formatter,
-        transporter,
-      },
-    ],
+  const rootLogger = getLogger('main', {
+    filter: filters.getMaxLevelFilter('info'),
+    formatter,
+    transporter,
   });
 
   afterEach(() => logIndicator.mockReset());
@@ -46,19 +41,19 @@ describe('childlogger with higher levels', () => {
   test('main warning', () => {
     const message = 'this is warning';
     rootLogger.warning(message);
-    expect(logIndicator).not.toHaveBeenCalled();
+    expect(logIndicator).toHaveBeenCalledWith('main warning: ' + message);
   });
 
   test('main notice', () => {
     const message = 'this is notice';
     rootLogger.notice(message);
-    expect(logIndicator).not.toHaveBeenCalled();
+    expect(logIndicator).toHaveBeenCalledWith('main notice: ' + message);
   });
 
   test('main info', () => {
     const message = 'this is info';
     rootLogger.info(message);
-    expect(logIndicator).not.toHaveBeenCalled();
+    expect(logIndicator).toHaveBeenCalledWith('main info: ' + message);
   });
 
   test('main debug', () => {
@@ -67,15 +62,10 @@ describe('childlogger with higher levels', () => {
     expect(logIndicator).not.toHaveBeenCalled();
   });
 
-  const childLogger = rootLogger.getLogger({
-    name: 'subLog',
-    handlers: [
-      {
-        filter: getMaxLevelFilter('notice'),
-        formatter,
-        transporter,
-      },
-    ],
+  const childLogger = rootLogger.getLogger('subLog', {
+    filter: filters.getMaxLevelFilter('crit'),
+    formatter,
+    transporter,
   });
 
   test('child emerg', () => {
@@ -99,21 +89,19 @@ describe('childlogger with higher levels', () => {
   test('child err', () => {
     const message = 'this is err';
     childLogger.err(message);
-    expect(logIndicator).toHaveBeenCalledWith('main+subLog err: ' + message);
+    expect(logIndicator).not.toHaveBeenCalled();
   });
 
   test('child warning', () => {
     const message = 'this is warning';
     childLogger.warning(message);
-    expect(logIndicator).toHaveBeenCalledWith(
-      'main+subLog warning: ' + message,
-    );
+    expect(logIndicator).not.toHaveBeenCalled();
   });
 
   test('child notice', () => {
     const message = 'this is notice';
     childLogger.notice(message);
-    expect(logIndicator).toHaveBeenCalledWith('main+subLog notice: ' + message);
+    expect(logIndicator).not.toHaveBeenCalled();
   });
 
   test('child info', () => {

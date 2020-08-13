@@ -1,10 +1,5 @@
 import MockDate from 'mockdate';
-import getLogger, {
-  Filter,
-  getTextFormatter,
-  Handler,
-  Transporter,
-} from '../index';
+import getLogger, { Filter, formatters, Handler, Transporter } from '../src';
 
 describe('text formatter', () => {
   const mockDate = new Date();
@@ -17,12 +12,12 @@ describe('text formatter', () => {
     logIndicator(msg.formatted);
   const handler: Handler = {
     filter,
-    formatter: getTextFormatter(maxLength),
+    formatter: formatters.getTextLengthFormatter(maxLength),
     transporter,
   };
   const handlers = [handler];
   const name = 'myApp';
-  const logger = getLogger({ name, handlers });
+  const logger = getLogger(name, handlers);
 
   afterEach(() => {
     logIndicator.mockReset();
@@ -131,7 +126,7 @@ describe('text formatter', () => {
   });
 
   test('child logger with same handlers', () => {
-    const childLogger = logger.getLogger({ name: 'child-1' });
+    const childLogger = logger.getLogger('child-1');
     const prefix = `${mockDateIso} [myApp.child-1] WARNING - `;
     const message = 'this is warning 1';
     childLogger.warning(message);

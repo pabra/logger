@@ -1,10 +1,5 @@
 import MockDate from 'mockdate';
-import getLogger, {
-  consoleRawDataHandler,
-  consoleWithoutDataTransporter,
-  getMaxLevelFilter,
-  getTextFormatter,
-} from '../index';
+import getLogger, { filters, formatters, handlers, transporters } from '../src';
 
 describe('tests involving console.log', () => {
   const mockDate = new Date();
@@ -29,7 +24,7 @@ describe('tests involving console.log', () => {
   console.warn = logIndicatorWarn;
   console.error = logIndicatorError;
 
-  const logger = getLogger({ handlers: [consoleRawDataHandler] });
+  const logger = getLogger('root');
 
   afterEach(() => {
     logIndicatorLog.mockReset();
@@ -104,36 +99,39 @@ describe('tests involving console.log', () => {
   });
 
   test('root notice', () => {
+    const prefix = `${mockDateIso} [root] NOTICE - `;
     const message = 'this is notice';
     logger.notice(message);
     expect(logIndicatorLog).not.toHaveBeenCalled();
     expect(logIndicatorDebug).not.toHaveBeenCalled();
-    expect(logIndicatorInfo).not.toHaveBeenCalled();
+    expect(logIndicatorInfo).toHaveBeenCalledWith(prefix + message);
     expect(logIndicatorWarn).not.toHaveBeenCalled();
     expect(logIndicatorError).not.toHaveBeenCalled();
   });
 
   test('root info', () => {
+    const prefix = `${mockDateIso} [root] INFORMATIONAL - `;
     const message = 'this is info';
     logger.info(message);
     expect(logIndicatorLog).not.toHaveBeenCalled();
     expect(logIndicatorDebug).not.toHaveBeenCalled();
-    expect(logIndicatorInfo).not.toHaveBeenCalled();
+    expect(logIndicatorInfo).toHaveBeenCalledWith(prefix + message);
     expect(logIndicatorWarn).not.toHaveBeenCalled();
     expect(logIndicatorError).not.toHaveBeenCalled();
   });
 
   test('root debug', () => {
+    const prefix = `${mockDateIso} [root] DEBUG - `;
     const message = 'this is debug';
     logger.debug(message);
     expect(logIndicatorLog).not.toHaveBeenCalled();
-    expect(logIndicatorDebug).not.toHaveBeenCalled();
+    expect(logIndicatorDebug).toHaveBeenCalledWith(prefix + message);
     expect(logIndicatorInfo).not.toHaveBeenCalled();
     expect(logIndicatorWarn).not.toHaveBeenCalled();
     expect(logIndicatorError).not.toHaveBeenCalled();
   });
 
-  const childLogger = logger.getLogger();
+  const childLogger = logger.getLogger('child1');
 
   test('child emerg', () => {
     const prefix = `${mockDateIso} [root.child1] EMERGENCY - `;
@@ -191,122 +189,31 @@ describe('tests involving console.log', () => {
   });
 
   test('child notice', () => {
+    const prefix = `${mockDateIso} [root.child1] NOTICE - `;
     const message = 'this is notice';
     childLogger.notice(message);
     expect(logIndicatorLog).not.toHaveBeenCalled();
     expect(logIndicatorDebug).not.toHaveBeenCalled();
-    expect(logIndicatorInfo).not.toHaveBeenCalled();
+    expect(logIndicatorInfo).toHaveBeenCalledWith(prefix + message);
     expect(logIndicatorWarn).not.toHaveBeenCalled();
     expect(logIndicatorError).not.toHaveBeenCalled();
   });
 
   test('child info', () => {
+    const prefix = `${mockDateIso} [root.child1] INFORMATIONAL - `;
     const message = 'this is info';
     childLogger.info(message);
     expect(logIndicatorLog).not.toHaveBeenCalled();
     expect(logIndicatorDebug).not.toHaveBeenCalled();
-    expect(logIndicatorInfo).not.toHaveBeenCalled();
+    expect(logIndicatorInfo).toHaveBeenCalledWith(prefix + message);
     expect(logIndicatorWarn).not.toHaveBeenCalled();
     expect(logIndicatorError).not.toHaveBeenCalled();
   });
 
   test('child debug', () => {
+    const prefix = `${mockDateIso} [root.child1] DEBUG - `;
     const message = 'this is debug';
     childLogger.debug(message);
-    expect(logIndicatorLog).not.toHaveBeenCalled();
-    expect(logIndicatorDebug).not.toHaveBeenCalled();
-    expect(logIndicatorInfo).not.toHaveBeenCalled();
-    expect(logIndicatorWarn).not.toHaveBeenCalled();
-    expect(logIndicatorError).not.toHaveBeenCalled();
-  });
-
-  const consoleAllChildLogger = childLogger.getLogger({
-    handlers: [
-      { ...consoleRawDataHandler, filter: getMaxLevelFilter('debug') },
-    ],
-  });
-
-  test('child2 emerg', () => {
-    const prefix = `${mockDateIso} [root.child1.child2] EMERGENCY - `;
-    const message = 'this is emergency';
-    consoleAllChildLogger.emerg(message);
-    expect(logIndicatorLog).not.toHaveBeenCalled();
-    expect(logIndicatorDebug).not.toHaveBeenCalled();
-    expect(logIndicatorInfo).not.toHaveBeenCalled();
-    expect(logIndicatorWarn).not.toHaveBeenCalled();
-    expect(logIndicatorError).toHaveBeenCalledWith(prefix + message);
-  });
-
-  test('child2 alert', () => {
-    const prefix = `${mockDateIso} [root.child1.child2] ALERT - `;
-    const message = 'this is alert';
-    consoleAllChildLogger.alert(message);
-    expect(logIndicatorLog).not.toHaveBeenCalled();
-    expect(logIndicatorDebug).not.toHaveBeenCalled();
-    expect(logIndicatorInfo).not.toHaveBeenCalled();
-    expect(logIndicatorWarn).not.toHaveBeenCalled();
-    expect(logIndicatorError).toHaveBeenCalledWith(prefix + message);
-  });
-
-  test('child2 crit', () => {
-    const prefix = `${mockDateIso} [root.child1.child2] CRITICAL - `;
-    const message = 'this is crit';
-    consoleAllChildLogger.crit(message);
-    expect(logIndicatorLog).not.toHaveBeenCalled();
-    expect(logIndicatorDebug).not.toHaveBeenCalled();
-    expect(logIndicatorInfo).not.toHaveBeenCalled();
-    expect(logIndicatorWarn).not.toHaveBeenCalled();
-    expect(logIndicatorError).toHaveBeenCalledWith(prefix + message);
-  });
-
-  test('child2 err', () => {
-    const prefix = `${mockDateIso} [root.child1.child2] ERROR - `;
-    const message = 'this is err';
-    consoleAllChildLogger.err(message);
-    expect(logIndicatorLog).not.toHaveBeenCalled();
-    expect(logIndicatorDebug).not.toHaveBeenCalled();
-    expect(logIndicatorInfo).not.toHaveBeenCalled();
-    expect(logIndicatorWarn).not.toHaveBeenCalled();
-    expect(logIndicatorError).toHaveBeenCalledWith(prefix + message);
-  });
-
-  test('child2 warning', () => {
-    const prefix = `${mockDateIso} [root.child1.child2] WARNING - `;
-    const message = 'this is warning';
-    consoleAllChildLogger.warning(message);
-    expect(logIndicatorLog).not.toHaveBeenCalled();
-    expect(logIndicatorDebug).not.toHaveBeenCalled();
-    expect(logIndicatorInfo).not.toHaveBeenCalled();
-    expect(logIndicatorWarn).toHaveBeenCalledWith(prefix + message);
-    expect(logIndicatorError).not.toHaveBeenCalled();
-  });
-
-  test('child2 notice', () => {
-    const prefix = `${mockDateIso} [root.child1.child2] NOTICE - `;
-    const message = 'this is notice';
-    consoleAllChildLogger.notice(message);
-    expect(logIndicatorLog).not.toHaveBeenCalled();
-    expect(logIndicatorDebug).not.toHaveBeenCalled();
-    expect(logIndicatorInfo).toHaveBeenCalledWith(prefix + message);
-    expect(logIndicatorWarn).not.toHaveBeenCalled();
-    expect(logIndicatorError).not.toHaveBeenCalled();
-  });
-
-  test('child2 info', () => {
-    const prefix = `${mockDateIso} [root.child1.child2] INFORMATIONAL - `;
-    const message = 'this is info';
-    consoleAllChildLogger.info(message);
-    expect(logIndicatorLog).not.toHaveBeenCalled();
-    expect(logIndicatorDebug).not.toHaveBeenCalled();
-    expect(logIndicatorInfo).toHaveBeenCalledWith(prefix + message);
-    expect(logIndicatorWarn).not.toHaveBeenCalled();
-    expect(logIndicatorError).not.toHaveBeenCalled();
-  });
-
-  test('child2 debug', () => {
-    const prefix = `${mockDateIso} [root.child1.child2] DEBUG - `;
-    const message = 'this is debug';
-    consoleAllChildLogger.debug(message);
     expect(logIndicatorLog).not.toHaveBeenCalled();
     expect(logIndicatorDebug).toHaveBeenCalledWith(prefix + message);
     expect(logIndicatorInfo).not.toHaveBeenCalled();
@@ -316,8 +223,13 @@ describe('tests involving console.log', () => {
 
   // test with data
 
+  const subChildConsoleDataLogger = childLogger.getLogger('subChild', {
+    ...handlers.getConsoleRawDataHandler('warning'),
+    filter: filters.getMaxLevelFilter('debug'),
+  });
+
   test('child2 debug with data', () => {
-    const prefix = `${mockDateIso} [root.child1.child2] DEBUG - `;
+    const prefix = `${mockDateIso} [root.child1.subChild] DEBUG - `;
     const message = 'this is debug with data';
     const data = [
       { a: 1 },
@@ -328,7 +240,7 @@ describe('tests involving console.log', () => {
       false,
       Symbol('23'),
     ];
-    consoleAllChildLogger.debug(message, ...data);
+    subChildConsoleDataLogger.debug(message, ...data);
     expect(logIndicatorLog).not.toHaveBeenCalled();
     expect(logIndicatorDebug).toHaveBeenCalledWith(prefix + message, ...data);
     expect(logIndicatorInfo).not.toHaveBeenCalled();
@@ -336,14 +248,10 @@ describe('tests involving console.log', () => {
     expect(logIndicatorError).not.toHaveBeenCalled();
   });
 
-  const consoleTextOnlyLogger = logger.getLogger({
-    handlers: [
-      {
-        filter: getMaxLevelFilter('debug'),
-        formatter: getTextFormatter(),
-        transporter: consoleWithoutDataTransporter,
-      },
-    ],
+  const consoleTextOnlyLogger = logger.getLogger('child1', {
+    filter: filters.getMaxLevelFilter('debug'),
+    formatter: formatters.textFormatter,
+    transporter: transporters.consoleWithoutDataTransporter,
   });
 
   test('child3 emerg with data', () => {
@@ -453,6 +361,73 @@ describe('tests involving console.log', () => {
     expect(logIndicatorDebug).toHaveBeenCalledWith(
       prefix + message + ' 42 false',
     );
+    expect(logIndicatorInfo).not.toHaveBeenCalled();
+    expect(logIndicatorWarn).not.toHaveBeenCalled();
+    expect(logIndicatorError).not.toHaveBeenCalled();
+  });
+
+  // console text logger
+  test('console text handler', () => {
+    const textLogger = logger.getLogger(
+      'textChild',
+      handlers.getConsoleTextHandler(),
+    );
+    const prefix = `${mockDateIso} [root.textChild] DEBUG - `;
+    const message = 'this is debug with data';
+    const data = [42, false];
+    textLogger.debug(message, ...data);
+    expect(logIndicatorLog).not.toHaveBeenCalled();
+    expect(logIndicatorDebug).toHaveBeenCalledWith(
+      prefix + message + ' 42 false',
+    );
+    expect(logIndicatorInfo).not.toHaveBeenCalled();
+    expect(logIndicatorWarn).not.toHaveBeenCalled();
+    expect(logIndicatorError).not.toHaveBeenCalled();
+  });
+
+  test('error console text handler', () => {
+    const textLogger = logger.getLogger(
+      'textChild',
+      handlers.getConsoleTextHandler('err'),
+    );
+    const message = 'this is debug with data';
+    const data = [42, false];
+    textLogger.debug(message, ...data);
+    expect(logIndicatorLog).not.toHaveBeenCalled();
+    expect(logIndicatorDebug).not.toHaveBeenCalled();
+    expect(logIndicatorInfo).not.toHaveBeenCalled();
+    expect(logIndicatorWarn).not.toHaveBeenCalled();
+    expect(logIndicatorError).not.toHaveBeenCalled();
+  });
+
+  // console json logger
+  test('console json handler', () => {
+    const jsonLogger = logger.getLogger(
+      'jsonChild',
+      handlers.getConsoleJsonHandler(),
+    );
+    const message = 'this is debug with data';
+    const data = [42, false];
+    jsonLogger.debug(message, ...data);
+    expect(logIndicatorLog).not.toHaveBeenCalled();
+    expect(logIndicatorDebug).toHaveBeenCalledWith(
+      `{"name":"jsonChild","nameChain":["root","jsonChild"],"time":"${mockDateIso}","level":"debug","levelValue":7,"levelServerity":"Debug","message":"${message}","data":[42,false]}`,
+    );
+    expect(logIndicatorInfo).not.toHaveBeenCalled();
+    expect(logIndicatorWarn).not.toHaveBeenCalled();
+    expect(logIndicatorError).not.toHaveBeenCalled();
+  });
+
+  test('info console json handler', () => {
+    const jsonLogger = logger.getLogger(
+      'jsonChild',
+      handlers.getConsoleJsonHandler('info'),
+    );
+    const message = 'this is debug with data';
+    const data = [42, false];
+    jsonLogger.debug(message, ...data);
+    expect(logIndicatorLog).not.toHaveBeenCalled();
+    expect(logIndicatorDebug).not.toHaveBeenCalled();
     expect(logIndicatorInfo).not.toHaveBeenCalled();
     expect(logIndicatorWarn).not.toHaveBeenCalled();
     expect(logIndicatorError).not.toHaveBeenCalled();

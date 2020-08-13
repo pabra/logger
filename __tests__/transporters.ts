@@ -1,9 +1,9 @@
-import { consoleTransporter, consoleWithoutDataTransporter } from '../index';
+import { transporters } from '../src';
 
 describe('console text transporter', () => {
   test('invalid level', () => {
     expect(() =>
-      consoleTransporter(
+      transporters.consoleTransporter(
         { name: 'logger name', nameChain: ['logger name'], handlers: [] },
         {
           raw: 'the message',
@@ -19,7 +19,7 @@ describe('console text transporter', () => {
 describe('console without data transporter', () => {
   test('invalid level', () => {
     expect(() =>
-      consoleWithoutDataTransporter(
+      transporters.consoleWithoutDataTransporter(
         { name: 'logger name', nameChain: ['logger name'], handlers: [] },
         {
           raw: 'the message',
