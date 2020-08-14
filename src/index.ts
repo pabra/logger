@@ -19,6 +19,7 @@ import {
 } from './transporters';
 
 export default getLogger;
+export { logLevels } from './levels';
 export type {
   Filter,
   Formatter,
