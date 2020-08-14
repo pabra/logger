@@ -43,7 +43,8 @@
     "logging",
     "typescript",
     "browser",
-    "nodejs"
+    "nodejs",
+    "syslog"
   ],
   "author": "Patrick Braune <pabra@netzfruech.de>",
   "license": "MIT",
