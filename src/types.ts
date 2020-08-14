@@ -5,7 +5,7 @@ export type LogLevelName = keyof LogLevels;
 export type LoggerNameChain = Readonly<string[]>;
 type DataArgs = Readonly<any[]>;
 type Log = (message: string, ...args: DataArgs) => void;
-export type Logger = {
+export type InternalLogger = {
   readonly name: string;
   readonly nameChain: LoggerNameChain;
   readonly handlers: Handlers;
@@ -20,13 +20,16 @@ interface MessageFormatted extends Message {
 }
 
 // a Filter decides if current call should be logged or not
-export type Filter = (logger: Logger, message: Message) => boolean;
+export type Filter = (logger: InternalLogger, message: Message) => boolean;
 
 // a Formatter formats the raw message into a string that will be logged
-export type Formatter = (logger: Logger, message: Message) => string;
+export type Formatter = (logger: InternalLogger, message: Message) => string;
 
 // a Transporter takes the formatted message and "transports" it to console, filesystem, network, etc
-export type Transporter = (logger: Logger, message: MessageFormatted) => void;
+export type Transporter = (
+  logger: InternalLogger,
+  message: MessageFormatted,
+) => void;
 
 // a Handler bundles Filter, Formatter and Transporter
 export type Handler = {
@@ -36,7 +39,7 @@ export type Handler = {
 };
 export type Handlers = Readonly<Handler[]>;
 
-export type GetLoggerReturn = { [K in LogLevelName]: Log } & {
+export type Logger = { [K in LogLevelName]: Log } & {
   getLogger: GetLoggerOverload;
   getHandlers: () => Handlers;
 };
@@ -45,11 +48,11 @@ export type GetLoggerWithChain = (
   name: string,
   handlers: Handlers,
   nameChain: LoggerNameChain,
-) => GetLoggerReturn;
+) => Logger;
 
 // wrapper around GetLoggerWithChain that will be exported
 export type GetLoggerOverload = {
-  (name: string): GetLoggerReturn;
-  (name: string, handler: Handler): GetLoggerReturn;
-  (name: string, handlers: Handlers): GetLoggerReturn;
+  (name: string): Logger;
+  (name: string, handler: Handler): Logger;
+  (name: string, handlers: Handlers): Logger;
 };

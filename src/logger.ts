@@ -1,10 +1,10 @@
 import { getConsoleRawDataHandler } from './handlers';
 import {
   GetLoggerOverload,
-  GetLoggerReturn,
   GetLoggerWithChain,
   Handler,
   Handlers,
+  InternalLogger,
   Logger,
   LoggerNameChain,
   Message,
@@ -15,7 +15,7 @@ const validLoggerNameExp = /^[a-zA-Z][a-zA-Z0-9_-]*$/;
 const isValidLoggerName = (name: unknown) =>
   typeof name === 'string' && validLoggerNameExp.test(name);
 
-const log = (logger: Logger, msg: Message, handler: Handler) => {
+const log = (logger: InternalLogger, msg: Message, handler: Handler) => {
   if (handler.filter && !handler.filter(logger, msg)) {
     return;
   }
@@ -26,7 +26,11 @@ const log = (logger: Logger, msg: Message, handler: Handler) => {
   });
 };
 
-const logHandlers = (logger: Logger, msg: Message, handlers: Handlers) => {
+const logHandlers = (
+  logger: InternalLogger,
+  msg: Message,
+  handlers: Handlers,
+) => {
   for (const handler of handlers) {
     log(logger, msg, handler);
   }
@@ -36,7 +40,7 @@ const getLoggerWithChain: GetLoggerWithChain = (
   name,
   handlers,
   nameChain,
-): GetLoggerReturn => {
+): Logger => {
   if (!isValidLoggerName(name)) {
     throw new Error(
       `invalid name: '${name}' - must match regex '${validLoggerNameExp.source}'`,

@@ -25,6 +25,7 @@ export type {
   Formatter,
   Handler,
   Handlers,
+  Logger,
   Transporter,
 } from './types';
 export const filters = { getMaxLevelFilter } as const;

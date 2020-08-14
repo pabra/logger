@@ -1,11 +1,11 @@
 import { logLevels } from './levels';
-import { Formatter, Logger, Message } from './types';
+import { Formatter, InternalLogger, Message } from './types';
 import { safeStringify } from './utils';
 
 const getLogTime = () => new Date().toISOString();
 const oneMiB = Math.pow(1024, 2);
 
-const getTextPrefix = (logger: Logger, msg: Message) =>
+const getTextPrefix = (logger: InternalLogger, msg: Message) =>
   `${getLogTime()} [${logger.nameChain.join('.')}] ${logLevels[
     msg.level
   ].severity.toUpperCase()} - ${msg.raw}`;
