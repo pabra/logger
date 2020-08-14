@@ -1,8 +1,8 @@
 import { logLevels } from './levels';
-import { Filter, LogLevels } from './types';
+import { Filter, LogLevelName } from './types';
 import { isLogLevelName } from './utils';
 
-const getMaxLevelFilter = (level: keyof LogLevels): Filter => {
+const getMaxLevelFilter = (level: LogLevelName): Filter => {
   if (!isLogLevelName(level)) {
     throw new Error('invalid log level name');
   }

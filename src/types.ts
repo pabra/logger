@@ -1,6 +1,6 @@
 import { logLevels } from './levels';
 
-export type LogLevels = typeof logLevels;
+type LogLevels = typeof logLevels;
 export type LogLevelName = keyof LogLevels;
 export type LoggerNameChain = Readonly<string[]>;
 type DataArgs = Readonly<any[]>;
@@ -13,7 +13,7 @@ export type Logger = {
 export interface Message {
   readonly raw: string;
   readonly data: DataArgs;
-  readonly level: keyof LogLevels;
+  readonly level: LogLevelName;
 }
 interface MessageFormatted extends Message {
   readonly formatted: string;
