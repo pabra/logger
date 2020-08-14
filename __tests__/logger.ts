@@ -69,18 +69,21 @@ describe('handlers', () => {
   });
 });
 
+const testFormatter: Formatter = (logger, msg) =>
+  `${logger.nameChain.join('+')} ${msg.level}: ${msg.raw}${
+    msg.data.length ? ` ${msg.data.map(d => String(d)).join(' ')}` : ''
+  }`;
+
 describe('multiple handlers', () => {
   const logIndicator1 = jest.fn();
   const logIndicator2 = jest.fn();
-  const formatter: Formatter = (logger, msg) =>
-    `${logger.nameChain.join('+')} ${msg.level}: ${msg.raw}`;
   const logger = getLogger('main', [
     {
-      formatter,
+      formatter: testFormatter,
       transporter: (_logger, { formatted }) => logIndicator1(formatted),
     },
     {
-      formatter,
+      formatter: testFormatter,
       transporter: (_logger, { formatted }) => logIndicator2(formatted),
     },
   ]);
@@ -91,5 +94,27 @@ describe('multiple handlers', () => {
     expect(logIndicator1).toHaveBeenCalledWith('main warning: my warning');
     expect(logIndicator2).toHaveBeenCalledTimes(1);
     expect(logIndicator2).toHaveBeenCalledWith('main warning: my warning');
+  });
+});
+
+describe('multiple data', () => {
+  const logIndicator = jest.fn();
+  const logger = getLogger('main', {
+    formatter: testFormatter,
+    transporter: (_logger, { formatted }) => logIndicator(formatted),
+  });
+
+  afterEach(() => logIndicator.mockReset());
+
+  test('data of same type', () => {
+    logger.info('some data', 1, 2, 3);
+    expect(logIndicator).toHaveBeenCalledTimes(1);
+    expect(logIndicator).toHaveBeenCalledWith('main info: some data 1 2 3');
+  });
+
+  test('data of different type', () => {
+    logger.info('some data', 1, true, '3');
+    expect(logIndicator).toHaveBeenCalledTimes(1);
+    expect(logIndicator).toHaveBeenCalledWith('main info: some data 1 true 3');
   });
 });

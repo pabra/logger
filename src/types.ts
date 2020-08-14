@@ -3,8 +3,8 @@ import { logLevels } from './levels';
 export type LogLevels = typeof logLevels;
 export type LogLevelName = keyof LogLevels;
 export type LoggerNameChain = Readonly<string[]>;
-type DataArgs<T> = Readonly<T[]>;
-type Log = <Data extends any>(message: string, ...args: DataArgs<Data>) => void;
+type DataArgs = Readonly<any[]>;
+type Log = (message: string, ...args: DataArgs) => void;
 export type Logger = {
   readonly name: string;
   readonly nameChain: LoggerNameChain;
@@ -12,7 +12,7 @@ export type Logger = {
 };
 export interface Message {
   readonly raw: string;
-  readonly data: DataArgs<any>;
+  readonly data: DataArgs;
   readonly level: keyof LogLevels;
 }
 interface MessageFormatted extends Message {
