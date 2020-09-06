@@ -19,6 +19,14 @@ goals are:
 - easily extendable
 - functional code and immutable data
 
+A [Logger](#logger) consists of 3 parts:
+
+- [Filter](#filter) (optional) - should a message be logged at all
+- [Formatter](#formatter) - how to format log entries
+- [Transporter](#transporter) - where to trasport log entries to
+
+These are packed together into a [Handler](#handler).
+
 ## Install
 
 ```bash
@@ -27,11 +35,11 @@ npm install --save @pabra/logger
 yarn add @pabra/logger
 ```
 
-## Simple Usage
+## Getting Started
 
-### just log everything
+### Just Log
 
-This tiny example works the same in browser and node.js.
+This works in both, browser and node.js environments.
 
 ```typescript
 // import
@@ -39,49 +47,88 @@ import getLogger from '@pabra/logger';
 
 // init and use root logger
 const rootLogger = getLogger('myProject');
-rootLogger.info("I'm using a simple logger now!");
-// prints to your console:
-// 2020-08-13T13:55:32.327Z [myProject] INFORMATIONAL - I'm using a simple logger now!
 
-// init and use child logger in your modules/components/etc.
-const moduleLogger = rootLogger.getLogger('myModule');
-moduleLogger.warning('something unexpected happened', { some: ['data', true] });
-// prints to your console:
-// 2020-08-13T13:55:55.497Z [myProject.myModule] WARNING - something unexpected happened { some: [ 'data', true ] }
+rootLogger.info("I'm using a simple logger now!");
 ```
 
-Besides the timestamp and origin (by the name of the logger in square brackets)
-you have not much benefit over using `console.log` directly.
+Results in the following console output:
 
-### log only important stuff in production
+```console
+2020-08-13T13:55:32.327Z [myProject] INFORMATIONAL - I'm using a simple logger now!
+```
+
+### Logging Data
+
+Pass any additional data after the log message.
+
+```typescript
+rootLogger.warning('something unexpected happened', { some: ['data', true] }, '23', 42 );
+```
+
+Results in the following console output:
+
+```console
+2020-09-06T07:29:05.356Z [myProject] WARNING - something unexpected happened { some: [ 'data', true ] } 23 42
+```
+
+### Child Logger
+
+Call `getLogger` on your rootLogger to get a child logger.
 
 ```typescript
 // import
-import getLogger, { handlers } from '@pabra/logger';
+import getLogger from '@pabra/logger';
 
-// init and use root logger
-const logLevel = process.env.NODE_ENV === 'development' ? undefined : 'warning';
-const logHandler = handlers.getConsoleRawDataHandler(logLevel);
-const rootLogger = getLogger('myProject', logHandler);
-rootLogger.info("I'm using a simple logger now!");
-// prints nothing in "production" (or "test")
+// init root logger
+const rootLogger = getLogger('myProject');
 
 // init and use child logger in your modules/components/etc.
 const moduleLogger = rootLogger.getLogger('myModule');
-moduleLogger.warning('something unexpected happened', { some: ['data', true] });
-// prints in "development" and "production" to your console:
-// 2020-08-13T13:55:55.497Z [myProject.myModule] WARNING - something unexpected happened { some: [ 'data', true ] }
+moduleLogger.info('Logging from within a module!');
 ```
 
-In this example we explicitly pass a handler to `getLogger`. Please read
-[Usage](#usage) below about provided functions and arguments if you are
-interested.
+Results in the following console output:
+
+```console
+2020-09-06T07:39:08.677Z [myProject.myModule] INFORMATIONAL - Logging from within a module!
+```
+
+### Selectively Logging for Dev / Prod
+
+Set up a custom [Handler](#handler) to only show log messages starting at
+'warning' level in production:
+
+```typescript
+import getLogger, { handlers } from '@pabra/logger';
+
+const logLevel = process.env.NODE_ENV === 'development' ? undefined : 'warning';
+const logHandler = handlers.getConsoleRawDataHandler(logLevel);
+const rootLogger = getLogger('myProject', logHandler);
+// in some module
+const moduleLogger = rootLogger.getLogger('myModule');
+```
+
+Then, any log messages that are lower than "warning" will be ignored.
+
+```typescript
+rootLogger.info("I'm using a simple logger now!");
+moduleLogger.notice("I'm using a simple module logger now!");
+rootLogger.err('No such table in db.');
+moduleLogger.warning('User entered invalid user name.');
+```
+
+Will only show messages eqal or higher than 'warning' level:
+
+```console
+2020-09-06T07:53:40.896Z [myProject] ERROR - No such table in db.
+2020-09-06T07:53:40.896Z [myProject.myModule] WARNING - User entered invalid user name.
+```
 
 You should take care that `process.env.NODE_ENV` is properly set. This might
 also differ if you use it in node.js or browser (there is no global `process` in
 the browser - webpack
 [EnvironmentPlugin](https://webpack.js.org/plugins/environment-plugin/) might
-help).
+help with that).
 
 ## Usage
 
