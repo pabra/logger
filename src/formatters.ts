@@ -24,10 +24,10 @@ export const textFormatter: Formatter = (logger, msg) =>
       : ''
   }`;
 
-export const getTextLengthFormatter = (maxLength = oneMiB): Formatter => (
-  logger,
-  msg,
-) => limitLength(textFormatter(logger, msg), maxLength);
+export const getTextLengthFormatter =
+  (maxLength = oneMiB): Formatter =>
+  (logger, msg) =>
+    limitLength(textFormatter(logger, msg), maxLength);
 
 export const jsonFormatter: Formatter = ({ name, nameChain }, msg) => {
   const levelEntry = logLevels[msg.level];
@@ -45,7 +45,7 @@ export const jsonFormatter: Formatter = ({ name, nameChain }, msg) => {
   return safeStringify(jsonData);
 };
 
-export const getJsonLengthFormatter = (maxLength = oneMiB): Formatter => (
-  logger,
-  msg,
-) => limitLength(jsonFormatter(logger, msg), maxLength);
+export const getJsonLengthFormatter =
+  (maxLength = oneMiB): Formatter =>
+  (logger, msg) =>
+    limitLength(jsonFormatter(logger, msg), maxLength);
