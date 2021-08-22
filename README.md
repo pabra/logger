@@ -1,9 +1,10 @@
 # @pabra/logger
 
-[![npm version](https://badge.fury.io/js/%40pabra%2Flogger.svg)](https://www.npmjs.com/package/%40pabra%2Flogger)
+[![npm version](https://img.shields.io/npm/v/%40pabra%2Flogger?label=version&logo=npm)](https://www.npmjs.com/package/%40pabra%2Flogger)
+[![npm bundle size (scoped)](https://img.shields.io/bundlephobia/min/@pabra/logger?logo=data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAACSUlEQVRYw%2B2XP2gTcRTH459BEKSiQkH8%2FcmlaUpJEESECpKh0IKiU2b%2FDNKxDkrp0rjZUXBSHERcBEEX7eRQhVKcBBfrIgriYDEoorVJzs%2FL%2FdpexbSXXq4g3MHjLne%2F3%2Ft%2B3vu9y%2B9dJhPjsNb2G5O9YUzBZLbrKJVKexG9qLV9aYz9zPW01mbRGPM0m82eqVarOxMRRuAEorc5f0X4CdGfrVQqu4Jn5T3cP8%2F9eew9UBO5XO5QbNF8Pn8QZ1eI8A3i78SxMYO9G83xPO8YMHcBqXF%2BwO%2BhjkQlhUwcwcHDwIm9R7SnOs%2FY0R6Ax5m%2FgL3mekyWb6OC0gy6TqQfsVcygTTui5tF3%2Fd3UBvDBPVIlg%2Fft7TuG1g3iBT7QSHZmwwuJlXALOlhCVKKVzRXimvKATSgewHA8aQAqIcjStnHaNVFU2DCAA7CNLEvwFzt1hIENSWFbBpKtTT8dgBhE5A6xDNbKcJisbhfKe8aPmqhwNZpbAawCqKUXnZZmYz4Gsob9NsJt%2FUdFSBsDef4OfPOlcvl3Wt%2FRN4FAN%2FyfOlf0XYLIGw%2FmVsLXivzg%2BtfnfqICxDbUoAUIAVIAVKAFoDriGrBBmKXkxalH5BmpEng3%2F5qy%2FQQe%2F%2Bs61bqUXe06Nba0ptBh913uu1%2BLr0%2BgyfJxqcuZKXhWj12Sn2%2F428F%2BsO86%2BGW1pxFj5Z0f6BBudyVhhKnl4BZ2CQrreVjfZ8JfCKdbaFQOKC1dweI70A1XXakqBYRnVr5XNuWA9FRQOaU6j%2BZ%2BV%2BPP5ZRWPOOMBtbAAAAAElFTkSuQmCC)](https://bundlephobia.com/package/%40pabra%2Flogger)
+[![Codecov](https://img.shields.io/codecov/c/github/pabra/logger/master?logo=codecov)](https://codecov.io/gh/pabra/logger)
 [![unit-tests](https://github.com/pabra/logger/workflows/unit-tests/badge.svg?branch=master)](https://github.com/pabra/logger/actions?query=branch%3Amaster+workflow%3Aunit-tests)
 [![npm-publish](https://github.com/pabra/logger/workflows/npm-publish/badge.svg)](https://github.com/pabra/logger/actions?query=workflow%3Anpm-publish)
-[![codecov](https://codecov.io/gh/pabra/logger/branch/master/graph/badge.svg)](https://codecov.io/gh/pabra/logger)
 
 ## What
 
@@ -62,7 +63,12 @@ Results in the following console output:
 Pass any additional data after the log message.
 
 ```typescript
-rootLogger.warning('something unexpected happened', { some: ['data', true] }, '23', 42 );
+rootLogger.warning(
+  'something unexpected happened',
+  { some: ['data', true] },
+  '23',
+  42,
+);
 ```
 
 Results in the following console output:
@@ -154,17 +160,17 @@ type Logger = {
 #### How to get it
 
 ```typescript
-import getLogger from '@pabra/logger'
+import getLogger from '@pabra/logger';
 
 // get a main/root logger
-const mainLogger = getLogger(loggerName);               // default handler will be used
+const mainLogger = getLogger(loggerName); // default handler will be used
 // or
 const mainLogger = getLogger(loggerName, handler);
 // or
 const mainLogger = getLogger(loggerName, handlers);
 
 // get a child/module logger
-const moduleLogger = mainLogger.getLogger(loggerName);  // parent's handlers will be used
+const moduleLogger = mainLogger.getLogger(loggerName); // parent's handlers will be used
 // or
 const moduleLogger = mainLogger.getLogger(loggerName, handler);
 // or
@@ -251,7 +257,15 @@ type InternalLogger = {
 interface Message {
   readonly raw: string;
   readonly data: any[];
-  readonly level: "emerg" | "alert" | "crit" | "err" | "warning" | "notice" | "info" | "debug";
+  readonly level:
+    | 'emerg'
+    | 'alert'
+    | 'crit'
+    | 'err'
+    | 'warning'
+    | 'notice'
+    | 'info'
+    | 'debug';
 }
 ```
 
@@ -266,9 +280,9 @@ log entry gets handled. So no [`Filter`](#filter) behaves the same as a
 #### How to get it
 
 ```typescript
-import { filters, Filter } from '@pabra/logger'
+import { filters, Filter } from '@pabra/logger';
 
-const myFilter: Filter = filters.getMaxLevelFilter(logLevelName)
+const myFilter: Filter = filters.getMaxLevelFilter(logLevelName);
 ```
 
 | object              | type                                                                                                                                                                                                                                                                                             | required | description                                                                                                                                                                                                              |
@@ -286,14 +300,12 @@ If you want to have a [`Handler`](#handler) that should only handle `error` log
 entries, your [`Filter`](#filter) could look like this:
 
 ```typescript
-import { Filter } from '@pabra/logger'
+import { Filter } from '@pabra/logger';
 
-const myFilter: Filter = (_logger, message) =>
-  message.level === 'err';
+const myFilter: Filter = (_logger, message) => message.level === 'err';
 
 // or if you only want to handle log entries from your "auth" module
-const myFilter: Filter = (logger, _message) =>
-  logger.name === 'auth';
+const myFilter: Filter = (logger, _message) => logger.name === 'auth';
 ```
 
 ### Formatter
@@ -310,7 +322,15 @@ type InternalLogger = {
 interface Message {
   readonly raw: string;
   readonly data: any[];
-  readonly level: "emerg" | "alert" | "crit" | "err" | "warning" | "notice" | "info" | "debug";
+  readonly level:
+    | 'emerg'
+    | 'alert'
+    | 'crit'
+    | 'err'
+    | 'warning'
+    | 'notice'
+    | 'info'
+    | 'debug';
 }
 ```
 
@@ -353,7 +373,9 @@ data) could look like this:
 import { Formatter } from '@pabra/logger';
 
 const myFormatter: Formatter = (logger, message) =>
-  `${new Date().toISOString()} [${logger.name}] ${message.level}: ${message.raw}`;
+  `${new Date().toISOString()} [${logger.name}] ${message.level}: ${
+    message.raw
+  }`;
 ```
 
 ### Transporter
