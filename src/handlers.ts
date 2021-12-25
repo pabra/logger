@@ -11,20 +11,29 @@ import {
 import { Handler, LogLevelName } from './types';
 
 // will pass raw data to console.log without converting to JSON or text
-export const getConsoleRawDataHandler = (level?: LogLevelName): Handler => ({
-  filter: level === undefined ? level : getMaxLevelFilter(level),
-  formatter: textWithoutDataFormatter,
-  transporter: consoleTransporter,
-});
+export const getConsoleRawDataHandler = (level?: LogLevelName): Handler => {
+  const formatter = textWithoutDataFormatter;
+  const transporter = consoleTransporter;
 
-export const getConsoleTextHandler = (level?: LogLevelName): Handler => ({
-  filter: level === undefined ? level : getMaxLevelFilter(level),
-  formatter: getTextLengthFormatter(),
-  transporter: consoleWithoutDataTransporter,
-});
+  return level === undefined
+    ? { formatter, transporter }
+    : { filter: getMaxLevelFilter(level), formatter, transporter };
+};
 
-export const getConsoleJsonHandler = (level?: LogLevelName): Handler => ({
-  filter: level === undefined ? level : getMaxLevelFilter(level),
-  formatter: getJsonLengthFormatter(),
-  transporter: consoleWithoutDataTransporter,
-});
+export const getConsoleTextHandler = (level?: LogLevelName): Handler => {
+  const formatter = getTextLengthFormatter();
+  const transporter = consoleWithoutDataTransporter;
+
+  return level === undefined
+    ? { formatter, transporter }
+    : { filter: getMaxLevelFilter(level), formatter, transporter };
+};
+
+export const getConsoleJsonHandler = (level?: LogLevelName): Handler => {
+  const formatter = getJsonLengthFormatter();
+  const transporter = consoleWithoutDataTransporter;
+
+  return level === undefined
+    ? { formatter, transporter }
+    : { filter: getMaxLevelFilter(level), formatter, transporter };
+};
