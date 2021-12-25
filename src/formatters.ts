@@ -12,7 +12,7 @@ const getTextPrefix = (logger: InternalLogger, msg: Message) =>
 
 // FIXME: do not just cut off stringified JSON (won't be parsable anymore)
 const limitLength = (text: string, length: number) =>
-  text.length > length ? text.substr(0, length - 3) + '...' : text;
+  text.length > length ? text.slice(0, length - 3) + '...' : text;
 
 export const textWithoutDataFormatter: Formatter = (logger, msg) =>
   getTextPrefix(logger, msg);
