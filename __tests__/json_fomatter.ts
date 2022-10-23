@@ -30,7 +30,7 @@ describe('text formatter', () => {
   test('just message', () => {
     const message = 'this is info';
     logger.warning(message);
-    expect(logIndicator).toBeCalledWith(
+    expect(logIndicator).toHaveBeenCalledWith(
       `{"name":"${name}","nameChain":["${name}"],"time":"${mockDateIso}","level":"warning","levelValue":4,"levelServerity":"Warning","message":"${message}","data":[]}`,
     );
   });
@@ -43,7 +43,7 @@ describe('text formatter', () => {
     const expectation = `{"name":"${name}","nameChain":["${name}"],"time":"${mockDateIso}","level":"warning","levelValue":4,"levelServerity":"Warning","message":"${message}","data":[]}`;
     logger.warning(message);
     expect(expectation.length).toBe(maxLength);
-    expect(logIndicator).toBeCalledWith(expectation);
+    expect(logIndicator).toHaveBeenCalledWith(expectation);
   });
 
   test('too long message', () => {
@@ -54,13 +54,13 @@ describe('text formatter', () => {
     const expectation = `{"name":"${name}","nameChain":["${name}"],"time":"${mockDateIso}","level":"warning","levelValue":4,"levelServerity":"Warning","message":"01message+02message+03message+04message+05message+06message+07message+08message+09message...`;
     logger.warning(message);
     expect(expectation.length).toBe(maxLength);
-    expect(logIndicator).toBeCalledWith(expectation);
+    expect(logIndicator).toHaveBeenCalledWith(expectation);
   });
 
   test('message with data', () => {
     const message = 'msg';
     logger.warning(message, { a: 1 });
-    expect(logIndicator).toBeCalledWith(
+    expect(logIndicator).toHaveBeenCalledWith(
       `{"name":"${name}","nameChain":["${name}"],"time":"${mockDateIso}","level":"warning","levelValue":4,"levelServerity":"Warning","message":"msg","data":[{"a":1}]}`,
     );
   });
@@ -68,7 +68,7 @@ describe('text formatter', () => {
   test('message with multiple data', () => {
     const message = 'msg';
     logger.warning(message, { a: 1 }, { b: 2 });
-    expect(logIndicator).toBeCalledWith(
+    expect(logIndicator).toHaveBeenCalledWith(
       `{"name":"${name}","nameChain":["${name}"],"time":"${mockDateIso}","level":"warning","levelValue":4,"levelServerity":"Warning","message":"msg","data":[{"a":1},{"b":2}]}`,
     );
   });
@@ -78,7 +78,7 @@ describe('text formatter', () => {
     const error = new Error('boom');
     error.stack = 'dummy';
     logger.warning(message, error);
-    expect(logIndicator).toBeCalledWith(
+    expect(logIndicator).toHaveBeenCalledWith(
       `{"name":"${name}","nameChain":["${name}"],"time":"${mockDateIso}","level":"warning","levelValue":4,"levelServerity":"Warning","message":"msg","data":[{"name":"Error","message":"boom","stack":"dummy"}]}`,
     );
   });
@@ -88,7 +88,7 @@ describe('text formatter', () => {
     const error = new Error('boom');
     error.stack = 'dummy';
     logger.warning(message, { error });
-    expect(logIndicator).toBeCalledWith(
+    expect(logIndicator).toHaveBeenCalledWith(
       `{"name":"${name}","nameChain":["${name}"],"time":"${mockDateIso}","level":"warning","levelValue":4,"levelServerity":"Warning","message":"msg","data":[{"error":{"name":"Error","message":"boom","stack":"dummy"}}]}`,
     );
   });
@@ -96,7 +96,7 @@ describe('text formatter', () => {
   test('message with complex data', () => {
     const message = 'msg';
     logger.warning(message, ['a', { b: 2 }, true, Symbol('x')]);
-    expect(logIndicator).toBeCalledWith(
+    expect(logIndicator).toHaveBeenCalledWith(
       `{"name":"${name}","nameChain":["${name}"],"time":"${mockDateIso}","level":"warning","levelValue":4,"levelServerity":"Warning","message":"msg","data":[["a",{"b":2},true,null]]}`,
     );
   });
@@ -107,7 +107,7 @@ describe('text formatter', () => {
       message,
       new Array(10).fill(null).map(() => '0123456789'),
     );
-    expect(logIndicator).toBeCalledWith(
+    expect(logIndicator).toHaveBeenCalledWith(
       `{"name":"${name}","nameChain":["${name}"],"time":"${mockDateIso}","level":"warning","levelValue":4,"levelServerity":"Warning","message":"msg","data":[["0123456789","0123456789","0123456789","0123456789","0123456789","012345678...`,
     );
   });

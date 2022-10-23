@@ -17,13 +17,13 @@ const goodLoggerNames = ['root', 'child', 'undefined'];
 describe('root logger names', () => {
   test('valid names', () => {
     goodLoggerNames.forEach(name => {
-      expect(() => getLogger(name, [])).not.toThrowError();
+      expect(() => getLogger(name, [])).not.toThrow();
     });
   });
 
   test('invalid names', () => {
     badLoggerNames.forEach((name: any) => {
-      expect(() => getLogger(name, [])).toThrowError();
+      expect(() => getLogger(name, [])).toThrow();
     });
   });
 });
@@ -33,13 +33,13 @@ describe('child logger names', () => {
 
   test('valid names', () => {
     goodLoggerNames.forEach(name => {
-      expect(() => logger.getLogger(name, [])).not.toThrowError();
+      expect(() => logger.getLogger(name, [])).not.toThrow();
     });
   });
 
   test('invalid names', () => {
     badLoggerNames.forEach((name: any) => {
-      expect(() => logger.getLogger(name, [])).toThrowError();
+      expect(() => logger.getLogger(name, [])).toThrow();
     });
   });
 });
@@ -64,7 +64,7 @@ describe('handlers', () => {
 
   test('invalid log level names', () => {
     ['something', 23, 0, true, false, null].forEach((name: any) => {
-      expect(() => handlers.getConsoleRawDataHandler(name)).toThrowError();
+      expect(() => handlers.getConsoleRawDataHandler(name)).toThrow();
     });
   });
 });

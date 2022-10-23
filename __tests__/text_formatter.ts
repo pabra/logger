@@ -35,7 +35,7 @@ describe('text formatter', () => {
     const prefix = `${mockDateIso} [myApp] WARNING - `;
     const message = 'this is warning';
     logger.warning(message);
-    expect(logIndicator).toBeCalledWith(prefix + message);
+    expect(logIndicator).toHaveBeenCalledWith(prefix + message);
   });
 
   test('maxLength long message', () => {
@@ -46,7 +46,7 @@ describe('text formatter', () => {
       .join('');
     logger.warning(message);
     expect((prefix + message).length).toBe(maxLength);
-    expect(logIndicator).toBeCalledWith(prefix + message);
+    expect(logIndicator).toHaveBeenCalledWith(prefix + message);
   });
 
   test('too long message', () => {
@@ -61,21 +61,23 @@ describe('text formatter', () => {
     logger.warning(message);
     expect((prefix + message).length).toBe(maxLength + 10);
     expect(expectation.length).toBe(maxLength);
-    expect(logIndicator).toBeCalledWith(expectation);
+    expect(logIndicator).toHaveBeenCalledWith(expectation);
   });
 
   test('message with data', () => {
     const prefix = `${mockDateIso} [myApp] WARNING - `;
     const message = 'msg';
     logger.warning(message, { a: 1 });
-    expect(logIndicator).toBeCalledWith(prefix + message + ' {"a":1}');
+    expect(logIndicator).toHaveBeenCalledWith(prefix + message + ' {"a":1}');
   });
 
   test('message with multiple data', () => {
     const prefix = `${mockDateIso} [myApp] WARNING - `;
     const message = 'msg';
     logger.warning(message, { a: 1 }, { b: 2 });
-    expect(logIndicator).toBeCalledWith(prefix + message + ' {"a":1} {"b":2}');
+    expect(logIndicator).toHaveBeenCalledWith(
+      prefix + message + ' {"a":1} {"b":2}',
+    );
   });
 
   test('message with error', () => {
@@ -84,7 +86,7 @@ describe('text formatter', () => {
     const error = new Error('boom');
     error.stack = 'dummy';
     logger.warning(message, error);
-    expect(logIndicator).toBeCalledWith(
+    expect(logIndicator).toHaveBeenCalledWith(
       prefix + message + ' {"name":"Error","message":"boom","stack":"dummy"}',
     );
   });
@@ -95,7 +97,7 @@ describe('text formatter', () => {
     const error = new Error('boom');
     error.stack = 'dummy';
     logger.warning(message, { error });
-    expect(logIndicator).toBeCalledWith(
+    expect(logIndicator).toHaveBeenCalledWith(
       prefix +
         message +
         ' {"error":{"name":"Error","message":"boom","stack":"dummy"}}',
@@ -106,7 +108,7 @@ describe('text formatter', () => {
     const prefix = `${mockDateIso} [myApp] WARNING - `;
     const message = 'msg';
     logger.warning(message, ['a', { b: 2 }, true, Symbol('x')]);
-    expect(logIndicator).toBeCalledWith(
+    expect(logIndicator).toHaveBeenCalledWith(
       prefix + message + ' ["a",{"b":2},true,null]',
     );
   });
@@ -118,7 +120,7 @@ describe('text formatter', () => {
       message,
       new Array(10).fill(null).map(() => '0123456789'),
     );
-    expect(logIndicator).toBeCalledWith(
+    expect(logIndicator).toHaveBeenCalledWith(
       prefix +
         message +
         ' ["0123456789","0123456789","0123456789","0123456789","0123456789","012345...',
@@ -130,6 +132,6 @@ describe('text formatter', () => {
     const prefix = `${mockDateIso} [myApp.child-1] WARNING - `;
     const message = 'this is warning 1';
     childLogger.warning(message);
-    expect(logIndicator).toBeCalledWith(prefix + message);
+    expect(logIndicator).toHaveBeenCalledWith(prefix + message);
   });
 });

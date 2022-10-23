@@ -12,7 +12,7 @@ describe('console text transporter', () => {
           level: 'no such level' as any,
         },
       ),
-    ).toThrowError();
+    ).toThrow();
   });
 });
 
@@ -28,6 +28,6 @@ describe('console without data transporter', () => {
           level: 'no such level' as any,
         },
       ),
-    ).toThrowError();
+    ).toThrow();
   });
 });
