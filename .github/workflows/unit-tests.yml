@@ -64,3 +64,4 @@ jobs:
           flags: unittests
           env_vars: OS,NODE
           verbose: true
+          token: ${{ secrets.CODECOV_TOKEN }}
