@@ -61,8 +61,8 @@ const getLoggerWithChain: GetLoggerWithChain = (
     const childHandlers = isHandlers(maybeHandlerOrHandlers)
       ? maybeHandlerOrHandlers
       : maybeHandlerOrHandlers
-      ? [maybeHandlerOrHandlers]
-      : logger.handlers;
+        ? [maybeHandlerOrHandlers]
+        : logger.handlers;
 
     return getLoggerWithChain(childName, childHandlers, logger.nameChain);
   };
