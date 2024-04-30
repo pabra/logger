@@ -1,5 +1,4 @@
 import stringify from 'fast-safe-stringify';
-import { logLevels } from './levels';
 import { Handler, Handlers, LogLevelName } from './types';
 
 export const assertNever = (x: never): never => {
@@ -20,7 +19,15 @@ const errorReplacer = (_key: string, value: any) =>
 export const safeStringify = (data: any) => stringify(data, errorReplacer);
 
 export const isLogLevelName = (name: unknown): name is LogLevelName =>
-  typeof name === 'string' && name in logLevels;
+  typeof name === 'string' &&
+  (name === 'emerg' ||
+    name === 'alert' ||
+    name === 'crit' ||
+    name === 'err' ||
+    name === 'warning' ||
+    name === 'notice' ||
+    name === 'info' ||
+    name === 'debug');
 
 export const isHandlers = (
   handlerOrHandlers: Handler | Handlers | undefined,
