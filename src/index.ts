@@ -17,6 +17,7 @@ import {
   consoleTransporter,
   consoleWithoutDataTransporter,
 } from './transporters';
+import { isLogLevelName } from './utils';
 
 export default getLogger;
 export { logLevels } from './levels';
@@ -27,6 +28,7 @@ export type {
   Handlers,
   Logger,
   Transporter,
+  LogLevelName,
 } from './types';
 export const filters = { getMaxLevelFilter } as const;
 export const formatters = {
@@ -45,3 +47,6 @@ export const handlers = {
   getConsoleRawDataHandler,
   getConsoleJsonHandler,
 } as const;
+export const utils = {
+  isLogLevelName,
+};
