@@ -1,6 +1,6 @@
 {
   "name": "@pabra/logger",
-  "version": "1.0.8",
+  "version": "1.1.0",
   "description": "A small and simple but extendable logger for typescript/javascript in browser and Node.js.",
   "sideEffects": [
     "./src/transporters.ts",
