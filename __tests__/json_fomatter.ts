@@ -9,7 +9,7 @@ describe('text formatter', () => {
   const maxLength = 235;
   const filter: Filter = () => true;
   const transporter: Transporter = (_logger, msg) =>
-    logIndicator(msg.formatted);
+    logIndicator(msg.messageFormatted);
   const handler: Handler = {
     filter,
     formatter: formatters.getJsonLengthFormatter(maxLength),

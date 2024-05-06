@@ -6,8 +6,8 @@ describe('console text transporter', () => {
       transporters.consoleTransporter(
         { name: 'logger name', nameChain: ['logger name'], handlers: [] },
         {
-          raw: 'the message',
-          formatted: 'the formatted message',
+          messageRaw: 'the message',
+          messageFormatted: 'the formatted message',
           data: [],
           level: 'no such level' as any,
         },
@@ -22,8 +22,8 @@ describe('console without data transporter', () => {
       transporters.consoleWithoutDataTransporter(
         { name: 'logger name', nameChain: ['logger name'], handlers: [] },
         {
-          raw: 'the message',
-          formatted: 'the formatted message',
+          messageRaw: 'the message',
+          messageFormatted: 'the formatted message',
           data: [],
           level: 'no such level' as any,
         },

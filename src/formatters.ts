@@ -8,7 +8,7 @@ const oneMiB = Math.pow(1024, 2);
 const getTextPrefix = (logger: InternalLogger, msg: Message) =>
   `${getLogTime()} [${logger.nameChain.join('.')}] ${logLevels[
     msg.level
-  ].severity.toUpperCase()} - ${msg.raw}`;
+  ].severity.toUpperCase()} - ${msg.messageRaw}`;
 
 // FIXME: do not just cut off stringified JSON (won't be parsable anymore)
 const limitLength = (text: string, length: number) =>
@@ -38,7 +38,7 @@ export const jsonFormatter: Formatter = ({ name, nameChain }, msg) => {
     level: msg.level,
     levelValue: levelEntry.value,
     levelServerity: levelEntry.severity,
-    message: msg.raw,
+    message: msg.messageRaw,
     data: msg.data,
   };
 

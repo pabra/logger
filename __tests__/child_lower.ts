@@ -3,9 +3,9 @@ import getLogger, { filters, Formatter, Transporter } from '../src';
 describe('childlogger with lower levels', () => {
   const logIndicator = jest.fn();
   const formatter: Formatter = (logger, msg) =>
-    `${logger.nameChain.join('+')} ${msg.level}: ${msg.raw}`;
-  const transporter: Transporter = (_logger, { formatted }) =>
-    logIndicator(formatted);
+    `${logger.nameChain.join('+')} ${msg.level}: ${msg.messageRaw}`;
+  const transporter: Transporter = (_logger, { messageFormatted }) =>
+    logIndicator(messageFormatted);
   const rootLogger = getLogger('main', {
     filter: filters.getMaxLevelFilter('info'),
     formatter,

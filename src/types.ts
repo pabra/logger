@@ -11,12 +11,12 @@ export type InternalLogger = {
   readonly handlers: Handlers;
 };
 export interface Message {
-  readonly raw: string;
+  readonly messageRaw: string;
   readonly data: DataArgs;
   readonly level: LogLevelName;
 }
 export interface MessageFormatted extends Message {
-  readonly formatted: string;
+  readonly messageFormatted: string;
 }
 
 // a Filter decides if current call should be logged or not

@@ -22,7 +22,7 @@ const log = (logger: InternalLogger, msg: Message, handler: Handler) => {
 
   handler.transporter(logger, {
     ...msg,
-    formatted: handler.formatter(logger, msg),
+    messageFormatted: handler.formatter(logger, msg),
   });
 };
 
@@ -71,25 +71,53 @@ const getLoggerWithChain: GetLoggerWithChain = (
     getLogger: getChildLogger,
     getHandlers: () => logger.handlers,
     emerg: (msg, ...data) =>
-      logHandlers(logger, { raw: msg, data, level: 'emerg' }, logger.handlers),
+      logHandlers(
+        logger,
+        { messageRaw: msg, data, level: 'emerg' },
+        logger.handlers,
+      ),
     alert: (msg, ...data) =>
-      logHandlers(logger, { raw: msg, data, level: 'alert' }, logger.handlers),
+      logHandlers(
+        logger,
+        { messageRaw: msg, data, level: 'alert' },
+        logger.handlers,
+      ),
     crit: (msg, ...data) =>
-      logHandlers(logger, { raw: msg, data, level: 'crit' }, logger.handlers),
+      logHandlers(
+        logger,
+        { messageRaw: msg, data, level: 'crit' },
+        logger.handlers,
+      ),
     err: (msg, ...data) =>
-      logHandlers(logger, { raw: msg, data, level: 'err' }, logger.handlers),
+      logHandlers(
+        logger,
+        { messageRaw: msg, data, level: 'err' },
+        logger.handlers,
+      ),
     warning: (msg, ...data) =>
       logHandlers(
         logger,
-        { raw: msg, data, level: 'warning' },
+        { messageRaw: msg, data, level: 'warning' },
         logger.handlers,
       ),
     notice: (msg, ...data) =>
-      logHandlers(logger, { raw: msg, data, level: 'notice' }, logger.handlers),
+      logHandlers(
+        logger,
+        { messageRaw: msg, data, level: 'notice' },
+        logger.handlers,
+      ),
     info: (msg, ...data) =>
-      logHandlers(logger, { raw: msg, data, level: 'info' }, logger.handlers),
+      logHandlers(
+        logger,
+        { messageRaw: msg, data, level: 'info' },
+        logger.handlers,
+      ),
     debug: (msg, ...data) =>
-      logHandlers(logger, { raw: msg, data, level: 'debug' }, logger.handlers),
+      logHandlers(
+        logger,
+        { messageRaw: msg, data, level: 'debug' },
+        logger.handlers,
+      ),
   };
 };
 
