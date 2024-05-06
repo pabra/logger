@@ -1,5 +1,5 @@
-import getLogger, { filters } from '../src';
 import type { Formatter, Transporter } from '../src';
+import getLogger, { filters } from '../src';
 
 describe('childlogger with lower levels', () => {
   const logIndicator = jest.fn();

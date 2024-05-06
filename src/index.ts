@@ -26,11 +26,11 @@ export type {
   Formatter,
   Handler,
   Handlers,
+  LogLevelName,
   Logger,
   Message,
   MessageFormatted,
   Transporter,
-  LogLevelName,
 } from './types';
 export const filters = { getMaxLevelFilter } as const;
 export const formatters = {

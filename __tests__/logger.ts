@@ -1,5 +1,5 @@
-import getLogger, { handlers } from '../src';
 import type { Formatter } from '../src';
+import getLogger, { handlers } from '../src';
 
 const badLoggerNames = [
   '0',

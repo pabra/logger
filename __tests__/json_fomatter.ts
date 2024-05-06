@@ -1,6 +1,6 @@
 import MockDate from 'mockdate';
-import getLogger, { formatters } from '../src';
 import type { Filter, Handler, Transporter } from '../src';
+import getLogger, { formatters } from '../src';
 
 describe('text formatter', () => {
   const mockDate = new Date();
