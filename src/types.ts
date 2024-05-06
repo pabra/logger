@@ -15,7 +15,7 @@ export interface Message {
   readonly data: DataArgs;
   readonly level: LogLevelName;
 }
-interface MessageFormatted extends Message {
+export interface MessageFormatted extends Message {
   readonly formatted: string;
 }
 

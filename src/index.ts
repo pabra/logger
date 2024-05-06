@@ -27,6 +27,8 @@ export type {
   Handler,
   Handlers,
   Logger,
+  Message,
+  MessageFormatted,
   Transporter,
   LogLevelName,
 } from './types';
