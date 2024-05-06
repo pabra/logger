@@ -1,5 +1,5 @@
 import { getConsoleRawDataHandler } from './handlers';
-import {
+import type {
   GetLoggerOverload,
   GetLoggerWithChain,
   Handler,

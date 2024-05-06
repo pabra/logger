@@ -8,7 +8,7 @@ import {
   consoleTransporter,
   consoleWithoutDataTransporter,
 } from './transporters';
-import { Handler, LogLevelName } from './types';
+import type { Handler, LogLevelName } from './types';
 
 // will pass raw data to console.log without converting to JSON or text
 export const getConsoleRawDataHandler = (level?: LogLevelName): Handler => {

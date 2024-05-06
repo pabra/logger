@@ -1,4 +1,4 @@
-import { Transporter } from './types';
+import type { Transporter } from './types';
 import { assertNever } from './utils';
 
 export const consoleTransporter: Transporter = (_logger, msg) => {

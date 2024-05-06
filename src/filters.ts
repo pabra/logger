@@ -1,5 +1,5 @@
 import { logLevels } from './levels';
-import { Filter, LogLevelName } from './types';
+import type { Filter, LogLevelName } from './types';
 import { isLogLevelName } from './utils';
 
 const getMaxLevelFilter = (level: LogLevelName): Filter => {

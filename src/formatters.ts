@@ -1,5 +1,5 @@
 import { logLevels } from './levels';
-import { Formatter, InternalLogger, Message } from './types';
+import type { Formatter, InternalLogger, Message } from './types';
 import { safeStringify } from './utils';
 
 const getLogTime = () => new Date().toISOString();

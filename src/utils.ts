@@ -1,5 +1,5 @@
 import stringify from 'fast-safe-stringify';
-import { Handler, Handlers, LogLevelName } from './types';
+import type { Handler, Handlers, LogLevelName } from './types';
 
 export const assertNever = (x: never): never => {
   throw new Error('Unexpected object: ' + x);
