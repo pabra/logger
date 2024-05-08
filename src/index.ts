@@ -16,7 +16,11 @@ import {
   consoleTransporter,
   consoleWithoutDataTransporter,
 } from './transporters';
-import { isLogLevelName } from './utils';
+import {
+  getSafeStringifyWithErrorReplacer,
+  isLogLevelName,
+  safeStringify,
+} from './utils';
 
 export default getLogger;
 export type { JsonFormatterData } from './formatters';
@@ -50,4 +54,6 @@ export const handlers = {
 } as const;
 export const utils = {
   isLogLevelName,
+  safeStringify,
+  getSafeStringifyWithErrorReplacer,
 };

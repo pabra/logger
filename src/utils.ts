@@ -15,8 +15,33 @@ const errorReplacer = (_key: string, value: any) =>
       }
     : value;
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export const safeStringify = (data: any) => stringify(data, errorReplacer);
+type Replacer = (key: string, value: any) => any;
+
+function getErrorReplacer(
+  replacer?: Replacer | Replacer[],
+): (key: string, value: any) => any {
+  if (replacer === undefined) {
+    return errorReplacer;
+  }
+
+  if (Array.isArray(replacer)) {
+    return (key, value) =>
+      [...replacer, errorReplacer].reduce((acc, fn) => fn(key, acc), value);
+  }
+
+  return (key, value) =>
+    [replacer, errorReplacer].reduce((acc, fn) => fn(key, acc), value);
+}
+
+export function getSafeStringifyWithErrorReplacer(
+  replacer?: Replacer | Replacer[],
+): (data: any) => string {
+  const withErrorReplacer = getErrorReplacer(replacer);
+
+  return (data: any) => stringify(data, withErrorReplacer);
+}
+
+export const safeStringify = getSafeStringifyWithErrorReplacer();
 
 export const isLogLevelName = (name: unknown): name is LogLevelName =>
   typeof name === 'string' &&
