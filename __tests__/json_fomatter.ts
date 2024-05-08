@@ -1,19 +1,28 @@
 import MockDate from 'mockdate';
-import type { Filter, Handler, Transporter } from '../src';
+import type {
+  Filter,
+  Formatter,
+  Handler,
+  JsonFormatterData,
+  Transporter,
+} from '../src';
 import getLogger, { formatters } from '../src';
 
-describe('text formatter', () => {
+describe('json formatter', () => {
   const mockDate = new Date();
   const mockDateIso = mockDate.toISOString();
   MockDate.set(mockDate);
   const logIndicator = jest.fn();
-  const maxLength = 235;
   const filter: Filter = () => true;
-  const transporter: Transporter = (_logger, msg) =>
-    logIndicator(msg.messageFormatted);
-  const handler: Handler = {
+  const formatter: Formatter<JsonFormatterData> = formatters.jsonFormatter;
+  const transporter: Transporter<JsonFormatterData> = (
+    _logger,
+    _message,
+    messageFormatted,
+  ) => logIndicator(messageFormatted);
+  const handler: Handler<JsonFormatterData> = {
     filter,
-    formatter: formatters.getJsonLengthFormatter(maxLength),
+    formatter,
     transporter,
   };
   const handlers = [handler];
@@ -31,47 +40,46 @@ describe('text formatter', () => {
   test('just message', () => {
     const message = 'this is info';
     logger.warning(message);
-    expect(logIndicator).toHaveBeenCalledWith(
-      `{"name":"${name}","nameChain":["${name}"],"time":"${mockDateIso}","level":"warning","levelValue":4,"levelServerity":"Warning","message":"${message}","data":[]}`,
-    );
-  });
-
-  test('maxLength long message', () => {
-    const message = new Array(8)
-      .fill(null)
-      .map((_v, k) => `${String(k + 1).padStart(2, '0')}message+`)
-      .join('');
-    const expectation = `{"name":"${name}","nameChain":["${name}"],"time":"${mockDateIso}","level":"warning","levelValue":4,"levelServerity":"Warning","message":"${message}","data":[]}`;
-    logger.warning(message);
-    expect(expectation.length).toBe(maxLength);
-    expect(logIndicator).toHaveBeenCalledWith(expectation);
-  });
-
-  test('too long message', () => {
-    const message = new Array(9)
-      .fill(null)
-      .map((_v, k) => `${String(k + 1).padStart(2, '0')}message+`)
-      .join('');
-    const expectation = `{"name":"${name}","nameChain":["${name}"],"time":"${mockDateIso}","level":"warning","levelValue":4,"levelServerity":"Warning","message":"01message+02message+03message+04message+05message+06message+07message+08message+09message...`;
-    logger.warning(message);
-    expect(expectation.length).toBe(maxLength);
-    expect(logIndicator).toHaveBeenCalledWith(expectation);
+    expect(logIndicator).toHaveBeenCalledWith({
+      data: [],
+      level: 'warning',
+      levelServerity: 'Warning',
+      levelValue: 4,
+      message: 'this is info',
+      name: 'myApp',
+      nameChain: ['myApp'],
+      time: mockDateIso,
+    });
   });
 
   test('message with data', () => {
     const message = 'msg';
     logger.warning(message, { a: 1 });
-    expect(logIndicator).toHaveBeenCalledWith(
-      `{"name":"${name}","nameChain":["${name}"],"time":"${mockDateIso}","level":"warning","levelValue":4,"levelServerity":"Warning","message":"msg","data":[{"a":1}]}`,
-    );
+    expect(logIndicator).toHaveBeenCalledWith({
+      data: [{ a: 1 }],
+      level: 'warning',
+      levelServerity: 'Warning',
+      levelValue: 4,
+      message: 'msg',
+      name: 'myApp',
+      nameChain: ['myApp'],
+      time: mockDateIso,
+    });
   });
 
   test('message with multiple data', () => {
     const message = 'msg';
     logger.warning(message, { a: 1 }, { b: 2 });
-    expect(logIndicator).toHaveBeenCalledWith(
-      `{"name":"${name}","nameChain":["${name}"],"time":"${mockDateIso}","level":"warning","levelValue":4,"levelServerity":"Warning","message":"msg","data":[{"a":1},{"b":2}]}`,
-    );
+    expect(logIndicator).toHaveBeenCalledWith({
+      data: [{ a: 1 }, { b: 2 }],
+      level: 'warning',
+      levelServerity: 'Warning',
+      levelValue: 4,
+      message: 'msg',
+      name: 'myApp',
+      nameChain: ['myApp'],
+      time: mockDateIso,
+    });
   });
 
   test('message with error', () => {
@@ -79,9 +87,16 @@ describe('text formatter', () => {
     const error = new Error('boom');
     error.stack = 'dummy';
     logger.warning(message, error);
-    expect(logIndicator).toHaveBeenCalledWith(
-      `{"name":"${name}","nameChain":["${name}"],"time":"${mockDateIso}","level":"warning","levelValue":4,"levelServerity":"Warning","message":"msg","data":[{"name":"Error","message":"boom","stack":"dummy"}]}`,
-    );
+    expect(logIndicator).toHaveBeenCalledWith({
+      data: [error],
+      level: 'warning',
+      levelServerity: 'Warning',
+      levelValue: 4,
+      message: 'msg',
+      name: 'myApp',
+      nameChain: ['myApp'],
+      time: mockDateIso,
+    });
   });
 
   test('message with error in object', () => {
@@ -89,17 +104,32 @@ describe('text formatter', () => {
     const error = new Error('boom');
     error.stack = 'dummy';
     logger.warning(message, { error });
-    expect(logIndicator).toHaveBeenCalledWith(
-      `{"name":"${name}","nameChain":["${name}"],"time":"${mockDateIso}","level":"warning","levelValue":4,"levelServerity":"Warning","message":"msg","data":[{"error":{"name":"Error","message":"boom","stack":"dummy"}}]}`,
-    );
+    expect(logIndicator).toHaveBeenCalledWith({
+      data: [{ error: error }],
+      level: 'warning',
+      levelServerity: 'Warning',
+      levelValue: 4,
+      message: 'msg',
+      name: 'myApp',
+      nameChain: ['myApp'],
+      time: mockDateIso,
+    });
   });
 
   test('message with complex data', () => {
     const message = 'msg';
-    logger.warning(message, ['a', { b: 2 }, true, Symbol('x')]);
-    expect(logIndicator).toHaveBeenCalledWith(
-      `{"name":"${name}","nameChain":["${name}"],"time":"${mockDateIso}","level":"warning","levelValue":4,"levelServerity":"Warning","message":"msg","data":[["a",{"b":2},true,null]]}`,
-    );
+    const symb = Symbol('x');
+    logger.warning(message, ['a', { b: 2 }, true, symb]);
+    expect(logIndicator).toHaveBeenCalledWith({
+      data: [['a', { b: 2 }, true, symb]],
+      level: 'warning',
+      levelServerity: 'Warning',
+      levelValue: 4,
+      message: 'msg',
+      name: 'myApp',
+      nameChain: ['myApp'],
+      time: mockDateIso,
+    });
   });
 
   test('message with too long data', () => {
@@ -108,8 +138,28 @@ describe('text formatter', () => {
       message,
       new Array(10).fill(null).map(() => '0123456789'),
     );
-    expect(logIndicator).toHaveBeenCalledWith(
-      `{"name":"${name}","nameChain":["${name}"],"time":"${mockDateIso}","level":"warning","levelValue":4,"levelServerity":"Warning","message":"msg","data":[["0123456789","0123456789","0123456789","0123456789","0123456789","012345678...`,
-    );
+    expect(logIndicator).toHaveBeenCalledWith({
+      data: [
+        [
+          '0123456789',
+          '0123456789',
+          '0123456789',
+          '0123456789',
+          '0123456789',
+          '0123456789',
+          '0123456789',
+          '0123456789',
+          '0123456789',
+          '0123456789',
+        ],
+      ],
+      level: 'warning',
+      levelServerity: 'Warning',
+      levelValue: 4,
+      message: 'msg',
+      name: 'myApp',
+      nameChain: ['myApp'],
+      time: mockDateIso,
+    });
   });
 });

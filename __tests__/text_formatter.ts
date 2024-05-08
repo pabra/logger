@@ -9,9 +9,12 @@ describe('text formatter', () => {
   const logIndicator = jest.fn();
   const maxLength = 123;
   const filter: Filter = () => true;
-  const transporter: Transporter = (_logger, msg) =>
-    logIndicator(msg.messageFormatted);
-  const handler: Handler = {
+  const transporter: Transporter<string> = (
+    _logger,
+    _message,
+    messageFormatted,
+  ) => logIndicator(messageFormatted);
+  const handler: Handler<string> = {
     filter,
     formatter: formatters.getTextLengthFormatter(maxLength),
     transporter,

@@ -3,10 +3,13 @@ import getLogger, { filters } from '../src';
 
 describe('childlogger with lower levels', () => {
   const logIndicator = jest.fn();
-  const formatter: Formatter = (logger, msg) =>
+  const formatter: Formatter<string> = (logger, msg) =>
     `${logger.nameChain.join('+')} ${msg.level}: ${msg.messageRaw}`;
-  const transporter: Transporter = (_logger, { messageFormatted }) =>
-    logIndicator(messageFormatted);
+  const transporter: Transporter<string> = (
+    _logger,
+    _message,
+    messageFormatted,
+  ) => logIndicator(messageFormatted);
   const rootLogger = getLogger('main', {
     filter: filters.getMaxLevelFilter('info'),
     formatter,

@@ -1,5 +1,11 @@
 import MockDate from 'mockdate';
-import getLogger, { filters, formatters, handlers, transporters } from '../src';
+import getLogger, {
+  Transporter,
+  filters,
+  formatters,
+  handlers,
+  transporters,
+} from '../src';
 
 describe('tests involving console.log', () => {
   const mockDate = new Date();
@@ -251,7 +257,8 @@ describe('tests involving console.log', () => {
   const consoleTextOnlyLogger = logger.getLogger('child1', {
     filter: filters.getMaxLevelFilter('debug'),
     formatter: formatters.textFormatter,
-    transporter: transporters.consoleWithoutDataTransporter,
+    transporter:
+      transporters.consoleWithoutDataTransporter as Transporter<string>,
   });
 
   test('child3 emerg with data', () => {
@@ -410,9 +417,16 @@ describe('tests involving console.log', () => {
     const data = [42, false];
     jsonLogger.debug(message, ...data);
     expect(logIndicatorLog).not.toHaveBeenCalled();
-    expect(logIndicatorDebug).toHaveBeenCalledWith(
-      `{"name":"jsonChild","nameChain":["root","jsonChild"],"time":"${mockDateIso}","level":"debug","levelValue":7,"levelServerity":"Debug","message":"${message}","data":[42,false]}`,
-    );
+    expect(logIndicatorDebug).toHaveBeenCalledWith({
+      data: [42, false],
+      level: 'debug',
+      levelServerity: 'Debug',
+      levelValue: 7,
+      message: 'this is debug with data',
+      name: 'jsonChild',
+      nameChain: ['root', 'jsonChild'],
+      time: mockDateIso,
+    });
     expect(logIndicatorInfo).not.toHaveBeenCalled();
     expect(logIndicatorWarn).not.toHaveBeenCalled();
     expect(logIndicatorError).not.toHaveBeenCalled();

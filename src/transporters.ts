@@ -1,56 +1,48 @@
-import type { Transporter } from './types';
+import type { JsonValue, LogLevelName, Transporter } from './types';
 import { assertNever } from './utils';
 
-export const consoleTransporter: Transporter = (_logger, msg) => {
-  switch (msg.level) {
+function getConsoleLoggerForLevel(
+  level: LogLevelName,
+): (...data: any[]) => void {
+  switch (level) {
     case 'emerg':
     case 'alert':
     case 'crit':
     case 'err':
-      console.error(msg.messageFormatted, ...msg.data);
-      break;
+      return console.error;
 
     case 'warning':
-      console.warn(msg.messageFormatted, ...msg.data);
-      break;
+      return console.warn;
 
     case 'notice':
     case 'info':
-      console.info(msg.messageFormatted, ...msg.data);
-      break;
+      return console.info;
 
     case 'debug':
-      console.debug(msg.messageFormatted, ...msg.data);
-      break;
+      return console.debug;
 
     default:
-      assertNever(msg.level);
+      assertNever(level);
+      return console.log;
   }
+}
+
+export const consoleTransporter: Transporter<JsonValue> = (
+  _logger,
+  { level, data },
+  messageFormatted,
+) => {
+  const consoleLogger = getConsoleLoggerForLevel(level);
+
+  consoleLogger(messageFormatted, ...data);
 };
 
-export const consoleWithoutDataTransporter: Transporter = (_logger, msg) => {
-  switch (msg.level) {
-    case 'emerg':
-    case 'alert':
-    case 'crit':
-    case 'err':
-      console.error(msg.messageFormatted);
-      break;
+export const consoleWithoutDataTransporter: Transporter<JsonValue> = (
+  _logger,
+  { level },
+  messageFormatted,
+) => {
+  const consoleLogger = getConsoleLoggerForLevel(level);
 
-    case 'warning':
-      console.warn(msg.messageFormatted);
-      break;
-
-    case 'notice':
-    case 'info':
-      console.info(msg.messageFormatted);
-      break;
-
-    case 'debug':
-      console.debug(msg.messageFormatted);
-      break;
-
-    default:
-      assertNever(msg.level);
-  }
+  consoleLogger(messageFormatted);
 };

@@ -7,10 +7,10 @@ describe('console text transporter', () => {
         { name: 'logger name', nameChain: ['logger name'], handlers: [] },
         {
           messageRaw: 'the message',
-          messageFormatted: 'the formatted message',
           data: [],
           level: 'no such level' as any,
         },
+        'the formatted message',
       ),
     ).toThrow();
   });
@@ -23,10 +23,10 @@ describe('console without data transporter', () => {
         { name: 'logger name', nameChain: ['logger name'], handlers: [] },
         {
           messageRaw: 'the message',
-          messageFormatted: 'the formatted message',
           data: [],
           level: 'no such level' as any,
         },
+        'the formatted message',
       ),
     ).toThrow();
   });

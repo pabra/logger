@@ -1,5 +1,5 @@
 import stringify from 'fast-safe-stringify';
-import type { Handler, Handlers, LogLevelName } from './types';
+import type { Handler, Handlers, JsonValue, LogLevelName } from './types';
 
 export const assertNever = (x: never): never => {
   throw new Error('Unexpected object: ' + x);
@@ -29,6 +29,12 @@ export const isLogLevelName = (name: unknown): name is LogLevelName =>
     name === 'info' ||
     name === 'debug');
 
-export const isHandlers = (
-  handlerOrHandlers: Handler | Handlers | undefined,
-): handlerOrHandlers is Handlers => Array.isArray(handlerOrHandlers);
+export const isHandlers = <T extends JsonValue>(
+  handlerOrHandlers: Handler<T> | Handlers<T> | undefined,
+): handlerOrHandlers is Handlers<T> => Array.isArray(handlerOrHandlers);
+
+export const oneMiB = Math.pow(1024, 2);
+
+// FIXME: do not just cut off stringified JSON (won't be parsable anymore)
+export const limitLength = (text: string, length: number): string =>
+  text.length > length ? text.slice(0, length - 3) + '...' : text;

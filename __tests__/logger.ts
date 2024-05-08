@@ -70,7 +70,7 @@ describe('handlers', () => {
   });
 });
 
-const testFormatter: Formatter = (logger, msg) =>
+const testFormatter: Formatter<string> = (logger, msg) =>
   `${logger.nameChain.join('+')} ${msg.level}: ${msg.messageRaw}${
     msg.data.length ? ` ${msg.data.map(d => String(d)).join(' ')}` : ''
   }`;
@@ -81,12 +81,12 @@ describe('multiple handlers', () => {
   const logger = getLogger('main', [
     {
       formatter: testFormatter,
-      transporter: (_logger, { messageFormatted }) =>
+      transporter: (_logger, _message, messageFormatted) =>
         logIndicator1(messageFormatted),
     },
     {
       formatter: testFormatter,
-      transporter: (_logger, { messageFormatted }) =>
+      transporter: (_logger, _message, messageFormatted) =>
         logIndicator2(messageFormatted),
     },
   ]);
@@ -104,7 +104,7 @@ describe('multiple data', () => {
   const logIndicator = jest.fn();
   const logger = getLogger('main', {
     formatter: testFormatter,
-    transporter: (_logger, { messageFormatted }) =>
+    transporter: (_logger, _message, messageFormatted) =>
       logIndicator(messageFormatted),
   });
 

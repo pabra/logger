@@ -1,7 +1,6 @@
 /* eslint-disable import/no-unused-modules */
 import { getMaxLevelFilter } from './filters';
 import {
-  getJsonLengthFormatter,
   getTextLengthFormatter,
   jsonFormatter,
   textFormatter,
@@ -20,6 +19,7 @@ import {
 import { isLogLevelName } from './utils';
 
 export default getLogger;
+export type { JsonFormatterData } from './formatters';
 export { logLevels } from './levels';
 export type {
   Filter,
@@ -38,7 +38,6 @@ export const formatters = {
   textFormatter,
   jsonFormatter,
   getTextLengthFormatter,
-  getJsonLengthFormatter,
 } as const;
 export const transporters = {
   consoleTransporter,

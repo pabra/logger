@@ -5,6 +5,7 @@ import type {
   Handler,
   Handlers,
   InternalLogger,
+  JsonValue,
   Logger,
   LoggerNameChain,
   Message,
@@ -15,21 +16,22 @@ const validLoggerNameExp = /^[a-zA-Z][a-zA-Z0-9_-]*$/;
 const isValidLoggerName = (name: unknown) =>
   typeof name === 'string' && validLoggerNameExp.test(name);
 
-const log = (logger: InternalLogger, msg: Message, handler: Handler) => {
-  if (handler.filter && !handler.filter(logger, msg)) {
+const log = <T extends JsonValue>(
+  logger: InternalLogger<T>,
+  message: Message,
+  handler: Handler<T>,
+) => {
+  if (handler.filter && !handler.filter(logger, message)) {
     return;
   }
 
-  handler.transporter(logger, {
-    ...msg,
-    messageFormatted: handler.formatter(logger, msg),
-  });
+  handler.transporter(logger, message, handler.formatter(logger, message));
 };
 
-const logHandlers = (
-  logger: InternalLogger,
+const logHandlers = <T extends JsonValue>(
+  logger: InternalLogger<T>,
   msg: Message,
-  handlers: Handlers,
+  handlers: Handlers<T>,
 ) => {
   for (const handler of handlers) {
     log(logger, msg, handler);
@@ -54,22 +56,22 @@ const getLoggerWithChain: GetLoggerWithChain = (
     handlers,
   } as const;
 
-  const getChildLogger: GetLoggerOverload = (
+  const getChildLogger: GetLoggerOverload = <U extends JsonValue>(
     childName: string,
-    maybeHandlerOrHandlers?: Handler | Handlers,
+    maybeHandlerOrHandlers?: Handler<U> | Handlers<U>,
   ) => {
     const childHandlers = isHandlers(maybeHandlerOrHandlers)
       ? maybeHandlerOrHandlers
-      : maybeHandlerOrHandlers
-        ? [maybeHandlerOrHandlers]
-        : logger.handlers;
+      : ((maybeHandlerOrHandlers
+          ? [maybeHandlerOrHandlers]
+          : logger.handlers) as Handlers<U>);
 
     return getLoggerWithChain(childName, childHandlers, logger.nameChain);
   };
 
   return {
     getLogger: getChildLogger,
-    getHandlers: () => logger.handlers,
+    getHandlers: () => logger.handlers as Handlers<any>,
     emerg: (msg, ...data) =>
       logHandlers(
         logger,
@@ -123,13 +125,13 @@ const getLoggerWithChain: GetLoggerWithChain = (
 
 const defaultHandler = getConsoleRawDataHandler();
 
-export const getLogger: GetLoggerOverload = (
+export const getLogger: GetLoggerOverload = <T extends JsonValue>(
   name: string,
-  maybeHandlerOrHandlers?: Handler | Handlers,
+  maybeHandlerOrHandlers?: Handler<T> | Handlers<T>,
 ) => {
   const handlers = isHandlers(maybeHandlerOrHandlers)
     ? maybeHandlerOrHandlers
-    : [maybeHandlerOrHandlers ?? defaultHandler];
+    : ([maybeHandlerOrHandlers ?? defaultHandler] as Handlers<T>);
 
   return getLoggerWithChain(name, handlers, []);
 };
